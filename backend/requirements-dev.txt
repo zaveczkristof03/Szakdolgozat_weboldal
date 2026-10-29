@@ -1,0 +1,4 @@
+# Runtime and test-only dependencies for a reproducible local environment.
+-r requirements.txt
+pytest>=9.0,<10.0
+httpx2>=2.16,<3.0
