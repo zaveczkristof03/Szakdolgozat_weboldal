@@ -18,6 +18,10 @@ VERIFIED_LIGHTWAVE_DATABASE_IDS = {
     "ltdb/1.0.0",
     "nsrdb/1.0.0",
     "nstdb/1.0.0",
+    "mitdb/1.0.0",
+    "afdb/1.0.0",
+    "edb/1.0.0",
+    "ptb-xl/1.0.0",
 }
 
 

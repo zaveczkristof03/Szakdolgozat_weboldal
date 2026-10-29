@@ -1243,6 +1243,29 @@ function App() {
                                   </td>
                                 ))}
                               </tr>
+                              <tr>
+                                <th scope="row">LightWAVE</th>
+                                {compareDatabases.map((db) => {
+                                  const url = lightwaveUrl(db.lightwave_database_id)
+
+                                  return (
+                                    <td key={db.id}>
+                                      {url ? (
+                                        <a
+                                          className="secondary-button"
+                                          href={url}
+                                          target="_blank"
+                                          rel="noopener noreferrer"
+                                        >
+                                          Open in LightWAVE ↗
+                                        </a>
+                                      ) : (
+                                        'Not available'
+                                      )}
+                                    </td>
+                                  )
+                                })}
+                              </tr>
                             </tbody>
                           </table>
                         </div>
@@ -1934,6 +1957,8 @@ function App() {
                 </div>
               )}
             </dl>
+
+
 
             <div className="modal-note">
               Record counts do not necessarily equal the number of unique
