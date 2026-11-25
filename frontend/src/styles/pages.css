@@ -129,6 +129,84 @@
 
 .chip[aria-pressed='true'] .chip-count { color: inherit; opacity: 0.85; }
 
+/* ---- „Melyiket válasszam?” ---- */
+.chooser-title { margin-bottom: 8px; }
+.chooser-intro { font-size: 0.9rem; color: var(--ink-muted); }
+
+.questions { display: flex; flex-direction: column; gap: 16px; }
+
+.question {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.question legend {
+  padding: 0;
+  margin-bottom: 4px;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.radio {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.92rem;
+  cursor: pointer;
+}
+
+.radio input { margin: 0; accent-color: var(--accent-solid); }
+.questions .link-button { align-self: flex-start; }
+
+.choice-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  background: var(--paper);
+  border: 1px solid var(--rule);
+}
+
+.choice-item { padding: 12px 14px; }
+.choice-item + .choice-item { border-top: 1px solid var(--rule); }
+
+.criteria {
+  margin: 8px 0 0;
+  padding: 0;
+  list-style: none;
+  font-size: 0.9rem;
+}
+
+.criterion { display: flex; gap: 8px; padding: 2px 0; }
+.criterion strong { font-weight: 500; }
+
+.criterion-mark {
+  flex: none;
+  width: 1.1em;
+  font-family: var(--font-mono);
+  font-weight: 600;
+  text-align: center;
+}
+
+.criterion-met .criterion-mark { color: var(--accent); }
+.criterion-unmet { color: var(--ink-muted); }
+.criterion-unmet .criterion-mark { color: var(--danger); }
+.criterion-unknown { color: var(--ink-muted); font-style: italic; }
+
+.others { margin-top: 20px; }
+
+.others summary {
+  cursor: pointer;
+  padding: 6px 0;
+  color: var(--ink-muted);
+  font-size: 0.93rem;
+}
+
+.others[open] summary { margin-bottom: 8px; }
+
 /* ---- Adatlap ---- */
 .detail-code {
   font-family: var(--font-mono);

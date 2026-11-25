@@ -4,7 +4,7 @@ Az alkalmazás nyilvános EKG-adatbázisok **metaadatait** mutatja meg: segít m
 megvizsgálni és összehasonlítani őket. Nem elemez EKG-jeleket, és nem ad orvosi vagy
 kutatásmódszertani ajánlást.
 
-Három oldal van, a felső menüből érhetők el: **Katalógus**, **Összehasonlítás**, **Módszertan**.
+Négy oldal van, a felső menüből érhetők el: **Katalógus**, **Melyiket válasszam?**, **Összehasonlítás**, **Módszertan**.
 A jobb felső sarokban a **HU / EN** gombbal lehet nyelvet váltani (alapból magyar), a **Sötét mód / Világos mód** gombbal pedig témát. Mindkettőt megjegyzi a böngésző; a téma első látogatáskor a rendszerbeállítást követi.
 Az adatértékek (kategória, annotáció, leírás, licenc) mindkét nyelven a PhysioNet eredeti angol szövegei.
 Minden oldalnak és adatlapnak saját címe van (`#/catalog`, `#/compare`, `#/methodology`,
@@ -27,6 +27,14 @@ Bal oldalt a kereső és a szűrők, jobbra a találatok táblázata.
 
 A `Records` a felvételek, a `Subjects` a vizsgált személyek száma. A kettő külön érték,
 mert egy személytől több felvétel is származhat.
+
+## 1/b. Melyiket válasszam?
+
+Négy kérdés: mit vizsgálsz (a klinikai fókusz alapján), hány elvezetés kell, mekkora
+minimális mintavételezés, és milyen annotáció kell. Minden adatbázisnál feltételenként
+látszik: ✓ teljesül, ✗ nem teljesül, ? nem ellenőrizhető (mert az érték nincs rögzítve –
+ez nem számít teljesítettnek). Nincs pontszám és rangsor. Ha legfeljebb négy adatbázis felel
+meg, egy gombbal összehasonlíthatók.
 
 ## 2. Adatlap
 

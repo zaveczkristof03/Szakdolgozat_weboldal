@@ -20,6 +20,7 @@ import { useLang } from './i18n/useLang.ts'
 import CatalogPage from './features/catalog/CatalogPage.tsx'
 import ComparePage from './features/compare/ComparePage.tsx'
 import MethodologyPage from './features/methodology/MethodologyPage.tsx'
+import ChooserPage from './features/chooser/ChooserPage.tsx'
 import DatasetDetail from './features/dataset/DatasetDetail.tsx'
 
 type LoadState = 'loading' | 'ready' | 'error'
@@ -65,6 +66,14 @@ export default function App() {
     switch (route.page) {
       case 'catalog':
         return <CatalogPage databases={databases} compareIds={compareIds} onOpen={(id) => navigate({ datasetId: id })} onToggleCompare={toggleCompare} />
+      case 'choose':
+        return (
+          <ChooserPage
+            databases={databases}
+            onOpen={(id) => navigate({ datasetId: id })}
+            onCompareAll={(ids) => { setCompareIds(ids.slice(0, MAX_COMPARE_DATASETS)); navigate({ page: 'compare' }) }}
+          />
+        )
       case 'compare':
         return <ComparePage databases={databases} compareIds={compareIds} onToggle={toggleCompare} onReset={() => setCompareIds([])} />
       case 'methodology':

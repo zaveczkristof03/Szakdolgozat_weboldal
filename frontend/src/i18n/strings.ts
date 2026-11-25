@@ -16,6 +16,7 @@ export const s = {
     themeToLight: tx('Világos mód', 'Light mode'),
     pages: {
       catalog: tx('Katalógus', 'Catalog'),
+      choose: tx('Melyiket válasszam?', 'Which one to choose?'),
       compare: tx('Összehasonlítás', 'Compare'),
       methodology: tx('Módszertan', 'Methodology'),
     },
@@ -121,6 +122,32 @@ export const s = {
     footnote: tx(
       'Az „eltér” jelölésű sorok kutatási szempontból fontos eltérések: méret, mintavételezés, elvezetésszám, annotáció, fájlformátum vagy licenc. A rekordszám nem azonos a vizsgált személyek számával. Az adatértékek a PhysioNet eredeti, angol nyelvű szövegei.',
       'Rows marked “differs” are key differences for research use: size, sampling rate, leads, annotations, file format or license. Record counts are not the number of unique people.',
+    ),
+  },
+  chooser: {
+    title: tx('Melyiket válasszam?', 'Which dataset should I use?'),
+    intro: tx(
+      'Válaszolj néhány kérdésre, és megmutatjuk, mely adatbázisok felelnek meg, feltételenként indoklással. Nincs pontszám: egy adatbázis vagy minden feltételnek megfelel, vagy nem.',
+      'Answer a few questions to see which datasets fit, with a reason for every requirement. There is no score: a dataset either meets every requirement or it does not.',
+    ),
+    qArea: tx('Mit vizsgálsz?', 'What are you studying?'),
+    qLeads: tx('Hány elvezetés kell?', 'How many leads do you need?'),
+    qFrequency: tx('Minimális mintavételezés', 'Minimum sampling rate'),
+    qAnnotation: tx('Milyen annotáció kell?', 'Which annotations do you need?'),
+    reset: tx('Válaszok törlése', 'Clear answers'),
+    start: tx('Válassz legalább egy feltételt bal oldalt.', 'Choose at least one requirement on the left.'),
+    fitCount: (fit: number, total: number) => tx(`${fit} adatbázis felel meg (${total}-ből)`, `${fit} of ${total} datasets fit`),
+    compareFits: tx('Ezek összehasonlítása', 'Compare these'),
+    noFit: tx('Egy adatbázis sem felel meg minden feltételnek. Lent látod, melyik miért nem.', 'No dataset meets every requirement. See below why each one does not.'),
+    others: (n: number) => tx(`Nem felel meg vagy nem ellenőrizhető (${n}) – miért?`, `Does not fit or cannot be checked (${n}) – why?`),
+    status: {
+      met: tx('Teljesül', 'Met'),
+      unmet: tx('Nem teljesül', 'Not met'),
+      unknown: tx('Nem ellenőrizhető', 'Cannot be checked'),
+    },
+    footnote: tx(
+      '✓ teljesül · ✗ nem teljesül · ? nem ellenőrizhető, mert az érték nincs rögzítve (ez nem számít teljesítettnek). A kutatási terület a klinikai fókusz mezőből, az annotáció az annotációleírásból dől el.',
+      '✓ met · ✗ not met · ? cannot be checked because the value is not recorded (this never counts as met). The research area is read from the clinical focus field, annotations from the annotation description.',
     ),
   },
 } as const

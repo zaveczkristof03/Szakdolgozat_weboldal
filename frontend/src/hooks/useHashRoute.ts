@@ -7,7 +7,7 @@
  */
 import { useCallback, useEffect, useState } from 'react'
 
-export const PAGES = ['catalog', 'compare', 'methodology'] as const
+export const PAGES = ['catalog', 'choose', 'compare', 'methodology'] as const
 export type Page = (typeof PAGES)[number]
 
 export type Route = { page: Page; datasetId: number | null }

@@ -26,6 +26,7 @@ import { completenessFields } from '../src/domain/completeness.ts'
 import { comparisonRows } from '../src/domain/compare.ts'
 import { fairDefinitions } from '../src/domain/fair.ts'
 import { parseLang } from '../src/i18n/lang.ts'
+import { chooseDatasets, emptyChooserAnswers, evaluateChoice } from '../src/domain/chooser.ts'
 import { applyQuickFilter, isQuickFilterActive, quickFilters } from '../src/domain/quickFilters.ts'
 
 const afdb: ECGDatabase = {
@@ -152,4 +153,28 @@ test('quick filters only set existing filters and are recognised as active', () 
   assert.ok(isQuickFilterActive(twelveLead, filters))
   assert.ok(!isQuickFilterActive(twelveLead, { ...filters, search: 'ptb' }))
   assert.deepEqual(filterCatalog([afdb, { ...afdb, id: 2, leads: 12 }], filters).map((db) => db.id), [2])
+})
+
+test('chooser: a dataset fits only when every requirement is met, with a reason for each', () => {
+  const answers = { ...emptyChooserAnswers, area: 'atrial-fibrillation' as const, leads: 'two-plus' as const, minFrequency: 250, annotation: 'rhythm' as const }
+  const result = evaluateChoice(afdb, answers)
+  assert.equal(result.fits, true)
+  assert.equal(result.criteria.length, 4)
+  assert.match(result.criteria[0].detail.hu, /Atrial fibrillation/)
+  const twelve = evaluateChoice(afdb, { ...answers, leads: 'twelve-plus' })
+  assert.equal(twelve.fits, false)
+  assert.equal(twelve.criteria.find((c) => c.label.en === 'Leads')?.status, 'unmet')
+})
+
+test('chooser: a missing value is "cannot be checked" and never counts as met', () => {
+  const unknown = evaluateChoice({ ...afdb, frequency: null, leads: null }, { ...emptyChooserAnswers, minFrequency: 250, leads: 'two-plus' })
+  assert.equal(unknown.fits, false)
+  assert.deepEqual(unknown.criteria.map((c) => c.status), ['unknown', 'unknown'])
+})
+
+test('chooser: research area is read from the clinical focus only', () => {
+  const ludb = { ...afdb, id: 3, category: 'ECG waveform delineation', annotations: 'Rhythm annotations' }
+  const { fits, others } = chooseDatasets([afdb, ludb], { ...emptyChooserAnswers, area: 'atrial-fibrillation' })
+  assert.deepEqual(fits.map((r) => r.db.id), [1])
+  assert.deepEqual(others.map((r) => r.db.id), [3])
 })

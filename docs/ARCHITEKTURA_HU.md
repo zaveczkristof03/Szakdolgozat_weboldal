@@ -61,7 +61,7 @@ webes felületen nincs jelszó és nincs írási végpont, tehát nincs mit felt
 | `layout/Header.tsx` | Felső sáv a három menüponttal és a HU / EN nyelvváltóval. |
 | `i18n/` | Kétnyelvűség: `lang.ts` (nyelvek, mentés a böngészőbe), `useLang.ts` (a `t()` függvény), `strings.ts` (a felület összes felirata magyarul és angolul). |
 | `domain/` | **A szabályok és számítások**, React nélkül, ezért önállóan tesztelhetők. |
-| `features/` | Oldalanként egy mappa: `catalog`, `dataset` (adatlap), `compare`, `methodology`. |
+| `features/` | Oldalanként egy mappa: `catalog`, `chooser` (Melyiket válasszam?), `dataset` (adatlap), `compare`, `methodology`. |
 | `components/` | Közös építőelemek: `Modal` (felugró panel), `Value` (hiányzó érték jelölése). |
 | `styles/` | Stíluslapok: `base` (színek, betűk), `layout`, `components`, `pages`. |
 | `assets/fonts/` | Helyben tárolt IBM Plex betűtípusok (internet nélkül is működik). |
@@ -73,6 +73,7 @@ webes felületen nincs jelszó és nincs írási végpont, tehát nincs mit felt
 | `types.ts` | Az adatbázis-rekord TypeScript-típusa. |
 | `format.ts` | Számformázás, „Not recorded”, biztonságos linkek. |
 | `matching.ts` | Az annotációtípus-szűrő kifejezései (csak az annotáció mezőt nézi). |
+| `chooser.ts` | „Melyiket válasszam?”: négy kérdés, feltételenként teljesül / nem teljesül / nem ellenőrizhető. Nincs pontszám; a hiányzó érték soha nem számít teljesítettnek. |
 | `quickFilters.ts` | Gyorsszűrők (pl. „12 elvezetéses”): csak a meglévő szűrőket állítják be, így ugyanazt adják, mint a kézi szűrés. |
 | `search.ts` | Szabad szöveges keresés, szűrők, rendezés (a hiányzó érték mindig a lista végére kerül). |
 | `completeness.ts` | 16 mező kitöltöttsége („Documented: 15/16”). |
