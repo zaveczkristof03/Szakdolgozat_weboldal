@@ -19,32 +19,12 @@ DEFAULT_DB_PATH = BACKEND_DIR / "ekg_metadata.db"
 CATALOG_JSON_PATH = BACKEND_DIR / "data" / "catalog.json"
 BACKUP_DIR = BACKEND_DIR / "backups"
 
-ADMIN_TOKEN_TTL_SECONDS = 8 * 60 * 60
-LOGIN_MAX_FAILURES = 5
-LOGIN_FAILURE_WINDOW_SECONDS = 15 * 60
-LOGIN_LOCKOUT_SECONDS = 15 * 60
-
 CORS_ORIGINS = [
     "http://localhost:5173",
     "http://localhost:5174",
     "http://127.0.0.1:5173",
     "http://127.0.0.1:5174",
 ]
-
-
-def configured_admin_password() -> str:
-    """Return the mandatory admin password without ever logging its value.
-
-    Ha nincs beállítva jelszó, a backend el sem indul: így nem lehet véletlenül
-    védelem nélküli írási végpontokat közzétenni.
-    """
-    password = os.getenv("EKG_ADMIN_PASSWORD")
-    if password is None or not password.strip():
-        raise RuntimeError(
-            "EKG_ADMIN_PASSWORD must be configured before starting the backend. "
-            "The API refuses to start without an administrator password."
-        )
-    return password
 
 
 def database_path() -> Path:

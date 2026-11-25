@@ -1,8 +1,11 @@
-"""A /datasets végpontok: olvasás, keresés, létrehozás, szerkesztés, törlés, validáció."""
+"""A /datasets végpontok (csak olvasás) és a bejövő adatok ellenőrzése (Pydantic séma)."""
 
 from __future__ import annotations
 
-from conftest import login
+import pytest
+from pydantic import ValidationError
+
+from app.schemas import DatasetInput
 
 
 def full_payload(**overrides: object) -> dict[str, object]:
@@ -51,59 +54,40 @@ def test_unknown_dataset_returns_404(catalog_client) -> None:
     assert catalog_client.get("/datasets/99999").status_code == 404
 
 
-def test_missing_numbers_stay_missing_instead_of_defaults(empty_client) -> None:
-    response = empty_client.post("/datasets", json={"name": "Partially documented", "category": "Arrhythmia"}, headers=login(empty_client))
-    assert response.status_code == 201
-    body = response.json()
-    assert body["records"] is None
-    assert body["frequency"] is None
-    assert body["leads"] is None
-    assert body["subject_count"] is None
-    assert body["last_verified"] is None
+def test_api_is_read_only(catalog_client) -> None:
+    """Az írás nem az API-n keresztül történik, hanem a catalog.json-ban."""
+    assert catalog_client.post("/datasets", json=full_payload()).status_code == 405
+    assert catalog_client.put("/datasets/1", json=full_payload()).status_code == 405
+    assert catalog_client.delete("/datasets/1").status_code == 405
+    assert catalog_client.get("/admin/login").status_code == 404
 
 
-def test_update_replaces_every_field_and_keeps_extended_metadata(empty_client) -> None:
-    headers = login(empty_client)
-    created = empty_client.post("/datasets", json=full_payload(), headers=headers).json()
-    response = empty_client.put(f"/datasets/{created['id']}", json=full_payload(records=12, version="1.0.1"), headers=headers)
-    assert response.status_code == 200
-    body = response.json()
-    assert body["records"] == 12
-    assert body["version"] == "1.0.1"
-    assert body["doi"] == "10.13026/TEST01"
-    assert body["annotations"] == "Beat annotations"
-    assert body["subject_count"] == 8
+def test_missing_numbers_stay_missing_instead_of_defaults() -> None:
+    record = DatasetInput.model_validate({"name": "Partially documented", "category": "Arrhythmia"})
+    assert record.records is None
+    assert record.frequency is None
+    assert record.leads is None
+    assert record.subject_count is None
+    assert record.last_verified is None
 
 
-def test_duplicate_names_are_rejected(empty_client) -> None:
-    headers = login(empty_client)
-    assert empty_client.post("/datasets", json=full_payload(), headers=headers).status_code == 201
-    assert empty_client.post("/datasets", json=full_payload(name="test ecg database"), headers=headers).status_code == 409
+def test_invalid_doi_and_date_are_rejected() -> None:
+    with pytest.raises(ValidationError, match="DOI must look like"):
+        DatasetInput.model_validate(full_payload(doi="not-a-doi"))
+    with pytest.raises(ValidationError, match="YYYY-MM-DD"):
+        DatasetInput.model_validate(full_payload(last_verified="29/10/2026"))
 
 
-def test_delete_removes_the_record(empty_client) -> None:
-    headers = login(empty_client)
-    created = empty_client.post("/datasets", json=full_payload(), headers=headers).json()
-    assert empty_client.delete(f"/datasets/{created['id']}", headers=headers).status_code == 204
-    assert empty_client.get(f"/datasets/{created['id']}").status_code == 404
-    assert empty_client.delete(f"/datasets/{created['id']}", headers=headers).status_code == 404
+def test_doi_url_prefix_is_normalized() -> None:
+    assert DatasetInput.model_validate(full_payload(doi="https://doi.org/10.13026/C2F305")).doi == "10.13026/C2F305"
 
 
-def test_invalid_doi_and_date_are_rejected(empty_client) -> None:
-    headers = login(empty_client)
-    bad_doi = empty_client.post("/datasets", json=full_payload(doi="not-a-doi"), headers=headers)
-    assert bad_doi.status_code == 422
-    assert "DOI must look like" in bad_doi.text
-    bad_date = empty_client.post("/datasets", json=full_payload(last_verified="29/10/2026"), headers=headers)
-    assert bad_date.status_code == 422
-    assert "YYYY-MM-DD" in bad_date.text
+def test_negative_counts_are_rejected() -> None:
+    with pytest.raises(ValidationError):
+        DatasetInput.model_validate(full_payload(records=-1))
 
 
-def test_doi_url_prefix_is_normalized(empty_client) -> None:
-    response = empty_client.post("/datasets", json=full_payload(doi="https://doi.org/10.13026/C2F305"), headers=login(empty_client))
-    assert response.json()["doi"] == "10.13026/C2F305"
-
-
-def test_negative_counts_are_rejected(empty_client) -> None:
-    response = empty_client.post("/datasets", json=full_payload(records=-1), headers=login(empty_client))
-    assert response.status_code == 422
+@pytest.mark.parametrize("malicious_url", ["javascript:alert(1)", "data:text/html,test", "ftp://example.org/data"])
+def test_non_http_source_urls_are_rejected(malicious_url: str) -> None:
+    with pytest.raises(ValidationError):
+        DatasetInput.model_validate(full_payload(source_url=malicious_url))

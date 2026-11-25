@@ -31,15 +31,3 @@ export type ECGDatabase = {
   last_verified: string | null
   description: string
 }
-
-/** Az admin űrlap és a POST/PUT kérés tartalma (az `id` nélkül). */
-export type DatasetInput = Omit<ECGDatabase, 'id'>
-
-export type ResearchCollection = {
-  id: string
-  name: string
-  description: string
-  createdAt: string
-  datasetIds: number[]
-  notes: Record<string, string>
-}

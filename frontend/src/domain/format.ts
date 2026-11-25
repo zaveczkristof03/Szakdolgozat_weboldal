@@ -33,5 +33,3 @@ export const lightwaveUrl = (databaseId: string | null | undefined): string | nu
 
 export const doiUrl = (doi: string | null | undefined): string | null =>
   doi ? `https://doi.org/${doi}` : null
-
-export const todayIso = (): string => new Date().toISOString().slice(0, 10)

@@ -4,8 +4,8 @@ Mit csinál?
 - ``import``: a JSON rekordjait beírja az adatbázisba. Előtte automatikus mentés
   készül. A rekordot először ``id``, majd ``source_database_id`` alapján keresi;
   ha megvan, frissíti, ha nincs, beszúrja. SOHA nem töröl rekordot.
-- ``export``: az adatbázis aktuális tartalmát kiírja a JSON-ba (pl. ha az admin
-  felületen javítottál valamit, és ezt verziókezelni szeretnéd).
+- ``export``: az adatbázis aktuális tartalmát kiírja a JSON-ba (pl. ha közvetlenül
+  az adatbázisban javítottál valamit, és ezt verziókezelni szeretnéd).
 
 Miért kell? Az ``ekg_metadata.db`` nincs a gitben (.gitignore), így a katalógus
 egy friss klónból csak a JSON-ból építhető újra. A JSON az „igazság forrása”.

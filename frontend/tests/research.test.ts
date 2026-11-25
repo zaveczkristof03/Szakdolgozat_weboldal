@@ -5,27 +5,20 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
 import {
-  addDatasetToCollection,
   catalogCsvRows,
   countFairChecks,
   csvEscape,
   datasetSearchText,
   emptyCatalogFilters,
-  emptyFormValues,
-  emptyResearchCriteria,
   evaluateComparison,
   filterCatalog,
-  findResearchMatches,
-  formToPayload,
-  formValuesFrom,
   getCompleteness,
   getFairProfile,
   matchesAnnotation,
   MAX_COMPARE_DATASETS,
-  parseCollections,
+  sortCatalog,
   toggleCompareSelection,
   type ECGDatabase,
-  type ResearchCriteria,
 } from '../src/domain/research.ts'
 import { formatHash, parseHash } from '../src/hooks/useHashRoute.ts'
 
@@ -54,10 +47,6 @@ const afdb: ECGDatabase = {
   description: 'Long-term ECG recordings from subjects with atrial fibrillation.',
 }
 
-const criteria: ResearchCriteria = {
-  focus: 'atrial-fibrillation', leads: 2, minFrequency: 250, annotation: 'rhythm', fileFormat: 'WFDB', minRecords: 25, minSubjects: 20,
-}
-
 test('catalog search text includes identifiers and format, but not URLs', () => {
   const searchable = datasetSearchText(afdb)
   assert.match(searchable, /afdb/)
@@ -66,47 +55,15 @@ test('catalog search text includes identifiers and format, but not URLs', () => 
   assert.doesNotMatch(searchable, /https:/)
 })
 
-test('Research Fit Finder includes a dataset when all documented requirements match, and says where the focus was found', () => {
-  const result = findResearchMatches([afdb], criteria)
-  assert.equal(result.matches.length, 1)
-  assert.equal(result.matches[0].reasons.length, 7)
-  assert.match(result.matches[0].reasons[0], /clinical focus: “Atrial fibrillation”/)
-})
-
-test('missing values never satisfy a requirement', () => {
-  const unknown = { ...afdb, subject_count: null, frequency: null, leads: null }
-  const result = findResearchMatches([unknown], criteria)
-  assert.equal(result.matches.length, 0)
-  const explanation = result.excluded[0].missingEvidence.join(' ')
-  assert.match(explanation, /Subject count is not recorded/)
-  assert.match(explanation, /Sampling frequency is not recorded/)
-  assert.match(explanation, /number of ECG leads is not recorded/)
-})
-
-test('research focus is not inferred from URLs or descriptions', () => {
-  const csn = { ...afdb, category: 'Clinical 12-lead ECG', annotations: 'Rhythm labels', name: 'Chapman-Shaoxing and Ningbo ECG Database',
-    source_url: 'https://physionet.org/content/ecg-arrhythmia/1.0.0/', description: 'Arrhythmia study.' }
-  const result = findResearchMatches([csn], { ...emptyResearchCriteria, focus: 'arrhythmia' })
-  assert.equal(result.matches.length, 0)
-})
-
-test('ST/T focus does not match waveform-boundary annotations that only mention T waves', () => {
-  const ludb = { ...afdb, category: 'ECG waveform delineation', annotations: 'Manual delineation of P, QRS and T waves', name: 'Lobachevsky University Electrocardiography Database' }
-  assert.equal(findResearchMatches([ludb], { ...emptyResearchCriteria, focus: 'st-t' }).matches.length, 0)
-  assert.equal(findResearchMatches([ludb], { ...emptyResearchCriteria, focus: 'waveform-delineation' }).matches.length, 1)
-})
-
 test('annotation matching ignores hyphens and never uses the clinical category', () => {
   assert.ok(matchesAnnotation({ ...afdb, annotations: 'Expert-reviewed beat, rhythm and signal-quality annotations' }, 'signal-quality'))
   assert.ok(!matchesAnnotation({ ...afdb, annotations: null }, 'rhythm'))
 })
 
-test('Research Fit Finder explains numeric and file-format mismatches', () => {
-  const result = findResearchMatches([{ ...afdb, leads: 12, frequency: 128, file_format: 'CSV' }], criteria)
-  const explanation = result.excluded[0].missingEvidence.join(' ')
-  assert.match(explanation, /Requires 2 leads/)
-  assert.match(explanation, /below the required 250 Hz/)
-  assert.match(explanation, /required format is WFDB/)
+test('sorting keeps missing values last in both directions', () => {
+  const data = [{ ...afdb, id: 1, name: 'A', frequency: null }, { ...afdb, id: 2, name: 'B', frequency: 500 }, { ...afdb, id: 3, name: 'C', frequency: 128 }]
+  assert.deepEqual(sortCatalog(data, { key: 'frequency', direction: 'asc' }).map((db) => db.id), [3, 2, 1])
+  assert.deepEqual(sortCatalog(data, { key: 'frequency', direction: 'desc' }).map((db) => db.id), [2, 3, 1])
 })
 
 test('catalog filter treats an unknown frequency as not meeting a minimum', () => {
@@ -155,39 +112,9 @@ test('CSV export escapes quotes, neutralizes formulas and keeps missing values e
   assert.equal(rows[1][rows[0].indexOf('subject_count')], '')
 })
 
-test('saved research collections are deduplicated and invalid values are discarded', () => {
-  const collections = parseCollections(JSON.stringify([{
-    id: 'research-1', name: '  AF study  ', description: '  ', createdAt: 'not-a-date',
-    datasetIds: [1, 1, 2, -5, 'invalid'], notes: { '1': 'Keep for review', '2': 42, invalid: 'x' },
-  }, { id: 'broken' }]))
-  assert.equal(collections.length, 1)
-  assert.equal(collections[0].name, 'AF study')
-  assert.deepEqual(collections[0].datasetIds, [1, 2])
-  assert.deepEqual(collections[0].notes, { '1': 'Keep for review' })
-  assert.deepEqual(parseCollections('{not json'), [])
-})
-
-test('saving to research creates a first collection and does not duplicate', () => {
-  const first = addDatasetToCollection([], '', 7)
-  assert.equal(first.collections.length, 1)
-  assert.deepEqual(first.collections[0].datasetIds, [7])
-  const again = addDatasetToCollection(first.collections, first.targetId, 7)
-  assert.equal(again.alreadyPresent, true)
-})
-
-test('admin form keeps unknown values missing instead of inventing defaults', () => {
-  const values = { ...emptyFormValues(), name: 'New dataset', category: 'Arrhythmia' }
-  const { payload } = formToPayload(values)
-  assert.equal(payload?.records, null)
-  assert.equal(payload?.frequency, null)
-  assert.equal(payload?.leads, null)
-  assert.equal(payload?.last_verified, null)
-  assert.match(formToPayload({ ...values, leads: '0' }).error ?? '', /leads must be a whole number of at least 1/)
-  assert.deepEqual(formToPayload(formValuesFrom(afdb)).payload, (({ id: _id, ...rest }) => rest)(afdb))
-})
-
 test('hash routes round-trip and fall back to the catalog', () => {
   assert.deepEqual(parseHash('#/compare?dataset=12'), { page: 'compare', datasetId: 12 })
   assert.deepEqual(parseHash('#/unknown'), { page: 'catalog', datasetId: null })
-  assert.equal(formatHash({ page: 'finder', datasetId: null }), '#/finder')
+  assert.equal(formatHash({ page: 'methodology', datasetId: null }), '#/methodology')
+  assert.deepEqual(parseHash('#/finder'), { page: 'catalog', datasetId: null })
 })

@@ -69,16 +69,14 @@ export default function Modal({ titleId, title, onClose, children, className = '
         if (event.target === event.currentTarget && !closeDisabled) onClose()
       }}
     >
-      <section ref={dialogRef} className={`dataset-modal ${className}`} role="dialog" aria-modal="true" aria-labelledby={titleId} tabIndex={-1}>
+      <section ref={dialogRef} className={`modal ${className}`} role="dialog" aria-modal="true" aria-labelledby={titleId} tabIndex={-1}>
         <div className="modal-heading">
-          <div>
-            <h2 id={titleId}>{title}</h2>
-          </div>
+          <h2 id={titleId}>{title}</h2>
           <button type="button" className="modal-close" onClick={onClose} disabled={closeDisabled} aria-label={closeLabel}>
-            ×
+            Close
           </button>
         </div>
-        {children}
+        <div className="modal-body">{children}</div>
       </section>
     </div>
   )

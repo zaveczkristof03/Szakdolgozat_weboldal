@@ -16,9 +16,6 @@ exit /b 1
 if not exist "frontend\package.json" goto missing_frontend
 if not exist "backend\requirements.txt" goto missing_requirements
 
-set /p "EKG_ADMIN_PASSWORD=Adj meg egy helyi admin jelszot (pl. admin123!): "
-if not defined EKG_ADMIN_PASSWORD goto empty_password
-
 where py >nul 2>&1
 if errorlevel 1 goto missing_python
 where npm.cmd >nul 2>&1
@@ -59,11 +56,6 @@ exit /b 0
 :frontend_install_failed
 popd
 goto failed
-
-:empty_password
-echo HIBA: A jelszo nem lehet ures.
-pause
-exit /b 1
 
 :missing_frontend
 echo HIBA: Nem talalom a frontend\package.json fajlt.

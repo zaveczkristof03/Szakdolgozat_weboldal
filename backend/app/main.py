@@ -12,8 +12,8 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from . import config, db, security  # noqa: F401  (security import: jelszó-ellenőrzés indításkor)
-from .routers import admin, datasets
+from . import config, db
+from .routers import datasets
 
 
 @asynccontextmanager
@@ -24,16 +24,16 @@ async def lifespan(_app: FastAPI) -> AsyncIterator[None]:
 
 app = FastAPI(
     title="EKG MetaData Explorer API",
-    description="Read-only catalog API for ECG dataset metadata, with admin-protected editing.",
-    version="2.0.0",
+    description="Read-only catalog API for ECG dataset metadata.",
+    version="3.0.0",
     lifespan=lifespan,
 )
 
 app.add_middleware(
     CORSMiddleware,
     allow_origins=config.CORS_ORIGINS,
-    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allow_headers=["Content-Type", "X-Admin-Token"],
+    allow_methods=["GET"],
+    allow_headers=["Content-Type"],
 )
 
 
@@ -43,4 +43,3 @@ def health() -> dict[str, str]:
 
 
 app.include_router(datasets.router)
-app.include_router(admin.router)

@@ -119,7 +119,3 @@ class DatasetPage(BaseModel):
     total: int
     page: int
     page_size: int
-
-
-class AdminLoginInput(BaseModel):
-    password: str = Field(min_length=1, max_length=500)

@@ -1,11 +1,6 @@
-/* A stíluslapok belépési pontja. A sorrend számít: az alapok előbb, a töréspontok később. */
+/* A stíluslapok belépési pontja. A sorrend számít: alapok → elrendezés → elemek → oldalak. */
 @import './fonts.css';
 @import './base.css';
 @import './layout.css';
-@import './catalog.css';
-@import './compare.css';
-@import './statistics.css';
-@import './modals-forms.css';
-@import './responsive.css';
-@import './research-features.css';
-@import './additions.css';
+@import './components.css';
+@import './pages.css';

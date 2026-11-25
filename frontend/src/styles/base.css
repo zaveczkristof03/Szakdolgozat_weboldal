@@ -1,85 +1,116 @@
-/* Alap: színváltozók (design tokenek), alapelemek, űrlapelemek. */
+/*
+ * Alapok: színek, betűk, alap HTML-elemek.
+ *
+ * Tervezési elv: úgy nézzen ki, mint egy tudományos adatkatalógus vagy egy
+ * könyvtári adatbázis, ne mint egy marketingoldal. Ezért:
+ * - egyetlen kiemelőszín (sötétkék, a linkekhez és a kijelöléshez),
+ * - nincs színátmenet, árnyék, lekerekített „kártya” és dekoratív ikon,
+ * - a tartalmat vékony vonalak tagolják, nem dobozok,
+ * - a számok egyforma szélességű (tabular) számjegyekkel, jobbra igazítva.
+ */
 :root {
-  font-family: 'DM Sans', sans-serif;
-  color: #e5eaf2;
-  background: #0a101b;
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
+  --paper: #ffffff;
+  --page: #f7f7f5;
+  --ink: #1b1d21;
+  --ink-muted: #5b6069;
+  --ink-faint: #8a8f98;
+  --rule: #dedfe2;
+  --rule-strong: #b8bbc1;
+  --accent: #1d4f91;
+  --accent-hover: #163d70;
+  --accent-tint: #edf2f9;
+  --danger: #9b2c2c;
+  --danger-tint: #fbeeee;
+
+  --font-sans: 'IBM Plex Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, 'Cascadia Mono', Consolas, monospace;
+
+  --radius: 3px;
+  --content-width: 1240px;
+
+  color-scheme: light;
+  font-family: var(--font-sans);
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--ink);
+  background: var(--page);
   -webkit-font-smoothing: antialiased;
-  font-optical-sizing: auto;
-  --ground: #0a101b;
-  --surface: #101927;
-  --surface-raised: #142033;
-  --surface-soft: #0d1523;
-  --ink: #e5eaf2;
-  --muted: #94a2b6;
-  --quiet: #718198;
-  --line: #273448;
-  --accent: #65e3c3;
-  --accent-dark: #173a37;
 }
 
-* {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
 }
 
-html {
-  min-width: 320px;
-  min-height: 100%;
-  background: var(--ground);
-}
-
 body {
-  display: block;
-  width: 100%;
-  min-width: 320px;
-  min-height: 100vh;
   margin: 0;
-  background: var(--ground);
-  text-align: left;
+  min-width: 320px;
 }
 
-#root {
-  width: 100%;
-  min-width: 320px;
-  min-height: 100vh;
-  max-width: none;
+h1,
+h2,
+h3 {
   margin: 0;
-  padding: 0;
-  text-align: left;
+  font-weight: 600;
+  line-height: 1.25;
+}
+
+h1 { font-size: 1.35rem; }
+h2 { font-size: 1.1rem; }
+h3 { font-size: 0.95rem; }
+
+p { margin: 0 0 0.75rem; }
+
+a {
+  color: var(--accent);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 2px;
+}
+
+a:hover { color: var(--accent-hover); }
+
+code {
+  font-family: var(--font-mono);
+  font-size: 0.88em;
+  background: var(--page);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius);
+  padding: 0 0.25em;
 }
 
 button,
 input,
-select,
-textarea {
+select {
   font: inherit;
+  color: inherit;
 }
 
-button {
-  cursor: pointer;
-}
-
-button:focus-visible,
-a:focus-visible,
-input:focus-visible,
-select:focus-visible,
-textarea:focus-visible {
+:focus-visible {
   outline: 2px solid var(--accent);
-  outline-offset: 3px;
+  outline-offset: 2px;
 }
 
-a {
-  color: var(--accent);
-  text-decoration: none;
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
 }
 
-a:hover {
-  color: #a1f5e0;
+/* Hiányzó érték: látható, de halványabb és dőlt – nem tűnik el, és nem tűnik valódi adatnak. */
+.value-missing {
+  color: var(--ink-faint);
+  font-family: var(--font-sans);
+  font-style: italic;
 }
 
-button:disabled {
-  opacity: 0.45;
-  cursor: not-allowed;
+.numeric {
+  text-align: right;
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
 }
-

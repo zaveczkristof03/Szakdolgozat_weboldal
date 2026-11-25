@@ -1,13 +1,13 @@
 /**
  * Egyszerű, URL-alapú navigáció a címsor # utáni részével.
  *
- * Példák:  #/catalog   #/compare   #/finder?dataset=12
+ * Példák:  #/catalog   #/compare   #/catalog?dataset=12
  * Miért kell? Így működik a böngésző Vissza gombja, frissítés után ugyanott
  * maradunk, és egy adatlapra linket lehet küldeni. Külső router-könyvtár nem kell.
  */
 import { useCallback, useEffect, useState } from 'react'
 
-export const PAGES = ['catalog', 'finder', 'compare', 'quality', 'statistics', 'research'] as const
+export const PAGES = ['catalog', 'compare', 'methodology'] as const
 export type Page = (typeof PAGES)[number]
 
 export type Route = { page: Page; datasetId: number | null }

@@ -1,5 +1,7 @@
 # Fejlesztési változások – EKG MetaData Explorer
 
+> Megjegyzés (2026-11-25): az itt leírt Research Fit Finder, My Research, Statistics és admin funkciók később kikerültek az alkalmazásból. Lásd `docs/VALTOZASOK_EGYSZERUSITES.md`.
+
 ## Új funkciók
 
 1. **Research Fit Finder** – szabályalapú, magyarázható keresés kutatási fókusz, EKG-elvezetések száma, mintavételezés, annotáció, fájlformátum, rekordszám és személyszám alapján. A hiányzó adat nem számít teljesített feltételnek.

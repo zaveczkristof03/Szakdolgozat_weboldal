@@ -1,11 +1,15 @@
 /**
- * Database catalog oldal: összefoglaló sáv, kereső/szűrők, adattábla, CSV-export.
+ * Katalógus oldal: bal oldalt a szűrők, jobb oldalt a találatok táblázata.
  *
- * Adat: a teljes katalógus (props). Szűrés: domain/search.ts → filterCatalog.
+ * - Egy sorra (az adatbázis nevére) kattintva megnyílik az adatlap.
+ * - Az első oszlop jelölőnégyzetével lehet összehasonlításra kijelölni (max. 4).
+ * - Az oszlopfejlécre kattintva lehet rendezni.
+ * Adat: a teljes katalógus (props). Szűrés és rendezés: domain/search.ts.
  */
 import { useMemo, useState } from 'react'
-import { emptyCatalogFilters, filterCatalog, licenseName, type CatalogFilters as Filters } from '../../domain/search.ts'
+import { emptyCatalogFilters, filterCatalog, sortCatalog, type CatalogFilters as Filters, type SortKey, type SortState } from '../../domain/search.ts'
 import { MAX_COMPARE_DATASETS } from '../../domain/compare.ts'
+import { getCompleteness } from '../../domain/completeness.ts'
 import { catalogCsvRows, datedFilename, downloadCsv } from '../../domain/csv.ts'
 import type { ECGDatabase } from '../../domain/types.ts'
 import Value from '../../components/Value.tsx'
@@ -14,124 +18,100 @@ import CatalogFilters from './CatalogFilters.tsx'
 type Props = {
   databases: ECGDatabase[]
   compareIds: number[]
-  isAdmin: boolean
   onOpen: (id: number) => void
   onToggleCompare: (id: number) => void
-  onSave: (id: number) => void
-  onCreate: () => void
-  onEdit: (db: ECGDatabase) => void
-  onDelete: (db: ECGDatabase) => void
 }
 
-export default function CatalogPage({ databases, compareIds, isAdmin, onOpen, onToggleCompare, onSave, onCreate, onEdit, onDelete }: Props) {
+const columns: Array<{ key: SortKey; label: string; numeric?: boolean }> = [
+  { key: 'name', label: 'Dataset' },
+  { key: 'records', label: 'Records', numeric: true },
+  { key: 'subject_count', label: 'Subjects', numeric: true },
+  { key: 'frequency', label: 'Sampling rate', numeric: true },
+  { key: 'leads', label: 'Leads', numeric: true },
+  { key: 'category', label: 'Clinical focus' },
+]
+
+export default function CatalogPage({ databases, compareIds, onOpen, onToggleCompare }: Props) {
   const [filters, setFilters] = useState<Filters>(emptyCatalogFilters)
-  const filtered = useMemo(() => filterCatalog(databases, filters), [databases, filters])
-  const knownFrequencies = filtered.map((db) => db.frequency).filter((hz): hz is number => hz !== null)
-  const leadConfigurations = [...new Set(filtered.map((db) => db.leads).filter((leads): leads is number => leads !== null))].sort((a, b) => a - b)
+  const [sort, setSort] = useState<SortState>({ key: 'name', direction: 'asc' })
+  const rows = useMemo(() => sortCatalog(filterCatalog(databases, filters), sort), [databases, filters, sort])
   const compareFull = compareIds.length >= MAX_COMPARE_DATASETS
-  const columnCount = isAdmin ? 9 : 8
+
+  const sortBy = (key: SortKey) =>
+    setSort((current) => ({ key, direction: current.key === key && current.direction === 'asc' ? 'desc' : 'asc' }))
 
   return (
-    <>
-      <section className="catalog-summary" aria-label="Filtered catalog summary">
-        <div className="summary-item">
-          <span>Datasets in view</span>
-          <strong>{filtered.length}<small> / {databases.length}</small></strong>
-        </div>
-        <div className="summary-item">
-          <span>Lead configurations</span>
-          <strong>{leadConfigurations.length ? leadConfigurations.join(', ') : '—'}<small>{leadConfigurations.length ? ' leads' : ''}</small></strong>
-        </div>
-        <div className="summary-item">
-          <span>Sampling rates in view</span>
-          <strong>
-            {knownFrequencies.length ? <>{Math.min(...knownFrequencies)}–{Math.max(...knownFrequencies)}<small> Hz</small></> : '—'}
-          </strong>
-        </div>
-      </section>
+    <div className="catalog-layout">
+      <aside className="catalog-sidebar" aria-label="Filters">
+        <CatalogFilters databases={databases} filters={filters} onChange={setFilters} />
+      </aside>
 
-      <section className="panel catalog-panel">
-        <div className="panel-heading">
-          <div>
-            <h2>ECG database catalog</h2>
-            <p>Search by dataset name, then narrow results with metadata filters.</p>
-            {!isAdmin && <span className="read-only-note">Read-only public catalog</span>}
-          </div>
-          <div className="catalog-actions">
-            <span className="result-count">{filtered.length} {filtered.length === 1 ? 'dataset' : 'datasets'}</span>
-            {isAdmin && <button type="button" className="primary-action-button" onClick={onCreate}>＋ New dataset</button>}
-            <button type="button" className="export-button" onClick={() => downloadCsv(datedFilename('ekg-datasets'), catalogCsvRows(filtered))} disabled={!filtered.length}>
-              ↓ Export CSV
+      <section className="catalog-results" aria-labelledby="results-heading">
+        <div className="results-bar">
+          <h1 id="results-heading" className="results-heading">
+            {rows.length === databases.length ? `${databases.length} ECG datasets` : `${rows.length} of ${databases.length} datasets`}
+          </h1>
+          <div className="results-actions">
+            {compareIds.length > 0 && <a className="button" href="#/compare">Compare selected ({compareIds.length})</a>}
+            <button type="button" className="button button-quiet" onClick={() => downloadCsv(datedFilename('ekg-datasets'), catalogCsvRows(rows))} disabled={!rows.length}>
+              Export CSV
             </button>
           </div>
         </div>
 
-        <CatalogFilters databases={databases} filters={filters} onChange={setFilters} />
-
-        <div className="table-wrapper">
-          <table>
+        <div className="table-scroll">
+          <table className="data-table">
             <thead>
               <tr>
-                <th>Dataset</th>
-                <th className="numeric">Records*</th>
-                <th className="numeric">Subjects</th>
-                <th className="numeric">Sampling rate</th>
-                <th className="numeric">Leads</th>
-                <th>Clinical focus</th>
-                <th>Compare</th>
-                <th>Research list</th>
-                {isAdmin && <th>Actions</th>}
+                <th className="col-select"><span className="visually-hidden">Compare</span></th>
+                {columns.map((column) => {
+                  const active = sort.key === column.key
+                  return (
+                    <th key={column.key} className={column.numeric ? 'numeric' : undefined} aria-sort={active ? (sort.direction === 'asc' ? 'ascending' : 'descending') : undefined}>
+                      <button type="button" className="sort-button" onClick={() => sortBy(column.key)}>
+                        {column.label}
+                        <span className="sort-mark" aria-hidden="true">{active ? (sort.direction === 'asc' ? '↑' : '↓') : ''}</span>
+                      </button>
+                    </th>
+                  )
+                })}
+                <th className="numeric" title="Assessed metadata fields recorded in the catalog">Documented</th>
               </tr>
             </thead>
             <tbody>
-              {filtered.map((db) => {
+              {rows.map((db) => {
                 const selected = compareIds.includes(db.id)
+                const completeness = getCompleteness(db)
                 return (
-                  <tr key={db.id}>
+                  <tr key={db.id} className={selected ? 'is-selected' : undefined}>
+                    <td className="col-select">
+                      <input
+                        type="checkbox"
+                        checked={selected}
+                        disabled={!selected && compareFull}
+                        onChange={() => onToggleCompare(db.id)}
+                        aria-label={`Select ${db.name} for comparison`}
+                        title={!selected && compareFull ? `Up to ${MAX_COMPARE_DATASETS} datasets can be compared` : 'Select for comparison'}
+                      />
+                    </td>
                     <td>
-                      <button type="button" className="dataset-detail-trigger" onClick={() => onOpen(db.id)}>
-                        {db.name}<span aria-hidden="true"> ⓘ</span>
-                      </button>
-                      <small className="table-subtitle">{db.short_name ?? 'ECG dataset'} · {licenseName(db)}</small>
+                      <button type="button" className="dataset-link" onClick={() => onOpen(db.id)}>{db.name}</button>
+                      {db.short_name && <span className="dataset-code">{db.short_name}</span>}
                     </td>
                     <td className="numeric"><Value value={db.records} /></td>
                     <td className="numeric"><Value value={db.subject_count} /></td>
                     <td className="numeric"><Value value={db.frequency} unit="Hz" /></td>
                     <td className="numeric"><Value value={db.leads} /></td>
-                    <td><span className="category-value">{db.category}</span></td>
-                    <td>
-                      <button
-                        type="button"
-                        className={`compare-toggle ${selected ? 'selected' : ''}`}
-                        onClick={() => onToggleCompare(db.id)}
-                        disabled={!selected && compareFull}
-                        aria-pressed={selected}
-                      >
-                        {selected ? 'Added' : compareFull ? 'Limit reached' : 'Add +'}
-                      </button>
-                    </td>
-                    <td>
-                      <button type="button" className="text-button save-research-button" onClick={() => onSave(db.id)} aria-label={`Save ${db.name} to My Research`}>
-                        Save +
-                      </button>
-                    </td>
-                    {isAdmin && (
-                      <td>
-                        <div className="row-actions">
-                          <button type="button" className="row-edit-button" onClick={() => onEdit(db)} aria-label={`Edit ${db.name}`}>Edit</button>
-                          <button type="button" className="row-delete-button" onClick={() => onDelete(db)} aria-label={`Delete ${db.name}`}>Delete</button>
-                        </div>
-                      </td>
-                    )}
+                    <td>{db.category}</td>
+                    <td className="numeric">{completeness.present}/{completeness.total}</td>
                   </tr>
                 )
               })}
-              {!filtered.length && (
+              {!rows.length && (
                 <tr>
-                  <td colSpan={columnCount} className="empty-state">
-                    <strong>No matching datasets</strong>
-                    <span>Try a different name or reset the filters.</span>
-                    <button type="button" className="text-button" onClick={() => setFilters(emptyCatalogFilters)}>Reset all filters</button>
+                  <td colSpan={columns.length + 2} className="empty-row">
+                    No dataset matches these filters.{' '}
+                    <button type="button" className="link-button" onClick={() => setFilters(emptyCatalogFilters)}>Clear filters</button>
                   </td>
                 </tr>
               )}
@@ -139,11 +119,12 @@ export default function CatalogPage({ databases, compareIds, isAdmin, onOpen, on
           </table>
         </div>
 
-        <div className="panel-footnote">
-          * Records and subjects are different quantities: one subject can contribute several records.
-          “Not recorded” means the catalog has no verified value; it is never replaced by an estimate.
-        </div>
+        <p className="footnote">
+          Records and subjects are different quantities: one subject can contribute several records.
+          “Not recorded” means the catalog has no verified value. It is never replaced by an estimate.
+          See <a href="#/methodology">Methodology</a> for how “Documented” is counted.
+        </p>
       </section>
-    </>
+    </div>
   )
 }

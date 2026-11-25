@@ -1,11 +1,8 @@
-/** Az oldalak címei (menü, morzsamenü, oldalcím). */
+/** Az oldalak neve a felső menüben. */
 import type { Page } from '../hooks/useHashRoute.ts'
 
 export const pageTitles: Record<Page, string> = {
-  catalog: 'Database catalog',
-  finder: 'Research Fit Finder',
-  compare: 'Compare datasets',
-  quality: 'Metadata quality',
-  statistics: 'Statistics',
-  research: 'My Research',
+  catalog: 'Catalog',
+  compare: 'Compare',
+  methodology: 'Methodology',
 }

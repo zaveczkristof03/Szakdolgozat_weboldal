@@ -66,3 +66,23 @@ export function distinctValues<T extends string | number>(values: Array<T | null
   const unique = [...new Set(values.filter((value): value is T => value !== null && value !== undefined && value !== ''))]
   return unique.sort((a, b) => (typeof a === 'number' && typeof b === 'number' ? a - b : String(a).localeCompare(String(b))))
 }
+
+export type SortKey = 'name' | 'records' | 'subject_count' | 'frequency' | 'leads' | 'category'
+export type SortState = { key: SortKey; direction: 'asc' | 'desc' }
+
+/**
+ * Rendezés egy oszlop szerint. A hiányzó érték (null) MINDIG a lista végére kerül,
+ * irányától függetlenül – így egy „Not recorded” sosem tűnik a legkisebbnek vagy legnagyobbnak.
+ */
+export function sortCatalog(databases: ECGDatabase[], sort: SortState): ECGDatabase[] {
+  const factor = sort.direction === 'asc' ? 1 : -1
+  return [...databases].sort((a, b) => {
+    const left = a[sort.key]
+    const right = b[sort.key]
+    if (left === null && right === null) return a.name.localeCompare(b.name)
+    if (left === null) return 1
+    if (right === null) return -1
+    const result = typeof left === 'number' && typeof right === 'number' ? left - right : String(left).localeCompare(String(right))
+    return result === 0 ? a.name.localeCompare(b.name) : result * factor
+  })
+}
