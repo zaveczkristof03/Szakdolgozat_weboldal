@@ -21,7 +21,6 @@ rajzoltuk át.
   A „Not recorded” értékek rendezéskor mindig a végére kerülnek.
 - **Adatlap:** széles képernyőn (≥ 1600 px) állandó harmadik oszlop a táblázat mellett; amíg nincs kiválasztás, a katalógus ellenőrizhető tényeit mutatja. Keskenyebb képernyőn és mobilon jobbról nyíló panel.
 - **Mintafelvétel az adatlapon:** valódi, 3 másodperces EKG-jelrészlet a PhysioNetről, szabványos papírléptékben (25 mm/s, 10 mm/mV), mellette elvezetéstérkép a felvétel jelneveiből. Letöltés: `backend/scripts/fetch_ecg_samples.py`.
-- **Milliméterpapír-háttér:** a fejlécben ki-be kapcsolható.
 - **Methodology oldal:** adatforrás, olvasási szabályok, a „Documented” számítása, FAIR-ellenőrzések, korlátok.
 - **Dizájn:** IBM Plex betűk, egyetlen kiemelőszín, nincs színátmenet, árnyék, dísz-ikon és KPI-doboz.
   Az elvek: `docs/ARCHITEKTURA_HU.md`, „A dizájn elvei”.

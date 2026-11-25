@@ -11,7 +11,6 @@
         var stored = localStorage.getItem('ekg-theme')
         var dark = stored ? stored === 'dark' : window.matchMedia('(prefers-color-scheme: dark)').matches
         document.documentElement.dataset.theme = dark ? 'dark' : 'light'
-        document.documentElement.dataset.paper = localStorage.getItem('ekg-paper') === 'off' ? 'off' : 'on'
       } catch (e) {}
     </script>
   </head>

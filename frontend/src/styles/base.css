@@ -26,9 +26,7 @@
   --danger: #9b2c2c;
   --danger-tint: #fbeeee;
 
-  /* EKG-papír: a klinikai papír halvány vörös rácsa. */
-  --grid-minor: rgb(200 70 70 / 0.07);
-  --grid-major: rgb(200 70 70 / 0.16);
+  /* EKG-papír a mintafelvételhez: a klinikai papír halvány vörös rácsa. */
   --ecg-paper: #fffbfa;
   --ecg-minor: #f6dcda;
   --ecg-major: #e8aaa6;
@@ -72,8 +70,6 @@
   --danger: #e59393;
   --danger-tint: #3a2124;
 
-  --grid-minor: rgb(230 120 120 / 0.045);
-  --grid-major: rgb(230 120 120 / 0.10);
   --ecg-paper: #1f1c1e;
   --ecg-minor: #352628;
   --ecg-major: #573438;
@@ -160,18 +156,3 @@ select {
   white-space: nowrap;
 }
 
-/*
- * Milliméterpapír-háttér (fejlécben kapcsolható, hooks/usePaper.ts).
- * Négy egyszínű vonalmintából áll: 5 px-es kis és 25 px-es nagy négyzetek,
- * mint az EKG-papíron az 1 mm-es és 5 mm-es rács. Nem díszítő színátmenet:
- * minden „gradient” itt egy 1 px-es éles vonal, a többi átlátszó.
- */
-:root[data-paper='on'] body {
-  background-image:
-    linear-gradient(var(--grid-major) 1px, transparent 1px),
-    linear-gradient(90deg, var(--grid-major) 1px, transparent 1px),
-    linear-gradient(var(--grid-minor) 1px, transparent 1px),
-    linear-gradient(90deg, var(--grid-minor) 1px, transparent 1px);
-  background-size: 25px 25px, 25px 25px, 5px 5px, 5px 5px;
-  background-position: -1px -1px;
-}

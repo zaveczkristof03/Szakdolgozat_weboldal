@@ -1,9 +1,8 @@
 /**
- * Felső fejléc: az oldal neve, a menüpontok, a milliméterpapír-háttér, a sötét/világos mód és a nyelvváltó (HU / EN).
+ * Felső fejléc: az oldal neve, a menüpontok, a sötét/világos mód és a nyelvváltó (HU / EN).
  * Az aktív menüpontot és nyelvet az `aria-current` / `aria-pressed` jelzi (képernyőolvasónak is).
  */
 import { PAGES, type Page } from '../hooks/useHashRoute.ts'
-import { usePaper } from '../hooks/usePaper.ts'
 import { useTheme } from '../hooks/useTheme.ts'
 import { LANGS } from '../i18n/lang.ts'
 import { s } from '../i18n/strings.ts'
@@ -14,7 +13,6 @@ type Props = { activePage: Page; compareCount: number }
 export default function Header({ activePage, compareCount }: Props) {
   const { lang, setLang, t } = useLang()
   const { theme, toggleTheme } = useTheme()
-  const { paper, togglePaper } = usePaper()
   return (
     <header className="site-header">
       <div className="site-header-inner">
@@ -32,9 +30,6 @@ export default function Header({ activePage, compareCount }: Props) {
           </ul>
         </nav>
         <div className="header-tools">
-        <button type="button" className="theme-toggle paper-toggle" onClick={togglePaper} aria-pressed={paper}>
-          {t(s.app.paper)}
-        </button>
         <button type="button" className="theme-toggle" onClick={toggleTheme} aria-pressed={theme === 'dark'}>
           {t(theme === 'dark' ? s.app.themeToLight : s.app.themeToDark)}
         </button>

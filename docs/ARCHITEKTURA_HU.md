@@ -60,7 +60,6 @@ webes felületen nincs jelszó és nincs írási végpont, tehát nincs mit felt
 | `App.tsx` | A „karmester”: letölti a katalógust, tárolja az összehasonlításra kijelölt adatbázisokat, és az URL alapján kiválasztja az oldalt. |
 | `api/client.ts` | A backend-hívás egy helyen. |
 | `hooks/useMediaQuery.ts` | Figyeli az ablak szélességét: széles képernyőn az adatlap állandó jobb oldali panel, keskenyen felugró ablak. |
-| `hooks/usePaper.ts` | A milliméterpapír-háttér ki/be kapcsolása (alapból be), a választást megjegyzi. |
 | `hooks/useTheme.ts` | Világos / sötét mód: először a rendszerbeállítást követi, utána a választást megjegyzi. |
 | `hooks/useHashRoute.ts` | Navigáció a címsor `#/...` része alapján (Vissza gomb, linkelhető adatlap: `#/catalog?dataset=12`). |
 | `layout/Header.tsx` | Felső sáv a három menüponttal és a HU / EN nyelvváltóval. |
@@ -108,8 +107,7 @@ A felület egy tudományos adatkatalógusra hasonlít, nem marketingoldalra:
 - a számok egyforma szélességű számjegyekkel, jobbra igazítva jelennek meg, így oszlopban összevethetők;
 - a hiányzó érték dőlt, halvány „Not recorded”: látszik, de nem tűnik valódi adatnak;
 - nincs összesítő „KPI-doboz” és diagram, mert 21 rekordnál ezek nem mondanak többet a táblázatnál;
-- az egyetlen „kép” a valódi adat: az adatlapon egy 3 másodperces jelrészlet a forrásból, szabványos EKG-papíron, mellette egy elvezetéstérkép. Ha nincs letöltött jel, nincs helyette illusztráció;
-- a háttér halvány milliméterpapír (az EKG-papír 1 mm-es és 5 mm-es rácsa), a fejlécben kikapcsolható. Ez a témához kötött, nem öncélú dísz.
+- az egyetlen „kép” a valódi adat: az adatlapon egy 3 másodperces jelrészlet a forrásból, szabványos EKG-papíron, mellette egy elvezetéstérkép. Ha nincs letöltött jel, nincs helyette illusztráció.
 - széles képernyőn (legalább 1600 px) a katalógus három oszlopos: szűrők, táblázat, és jobb oldalt állandó adatlap-panel (master-detail). A sorra kattintva ott jelennek meg a részletek; amíg nincs kiválasztás, a panel a katalógusból számolt, ellenőrizhető tényeket mutatja (`features/catalog/CatalogOverview.tsx`). Keskenyebb képernyőn ugyanez az adatlap jobbról nyíló ablakként jelenik meg. A váltást a `hooks/useMediaQuery.ts` (`WIDE_LAYOUT_QUERY`) dönti el, az adatlap tartalma (`DatasetDetailBody`) mindkét esetben ugyanaz a komponens.
 
 ## Egy kattintás útja – példa a védésre

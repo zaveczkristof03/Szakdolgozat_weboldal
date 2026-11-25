@@ -104,28 +104,6 @@
 
 .theme-toggle:hover { color: var(--ink); }
 
-/* A milliméterpapír-kapcsoló előtt egy kis rácsminta mutatja, mire való. */
-.paper-toggle {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.paper-toggle::before {
-  content: '';
-  width: 12px;
-  height: 12px;
-  border: 1px solid var(--ecg-major);
-  background-image:
-    linear-gradient(var(--ecg-major) 1px, transparent 1px),
-    linear-gradient(90deg, var(--ecg-major) 1px, transparent 1px);
-  background-size: 4px 4px;
-  opacity: 0.35;
-}
-
-.paper-toggle[aria-pressed='true'] { color: var(--ink); }
-.paper-toggle[aria-pressed='true']::before { opacity: 1; }
-
 .lang-switch {
   display: inline-flex;
   border: 1px solid var(--rule-strong);

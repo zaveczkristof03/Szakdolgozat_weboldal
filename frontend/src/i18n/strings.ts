@@ -14,7 +14,6 @@ export const s = {
     language: tx('Nyelv', 'Language'),
     themeToDark: tx('Sötét mód', 'Dark mode'),
     themeToLight: tx('Világos mód', 'Light mode'),
-    paper: tx('Milliméterpapír', 'Graph paper'),
     pages: {
       catalog: tx('Katalógus', 'Catalog'),
       choose: tx('Melyiket válasszam?', 'Which one to choose?'),
