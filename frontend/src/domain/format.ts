@@ -1,18 +1,22 @@
 /** Kis segédfüggvények a megjelenítéshez. Egy helyen, hogy minden oldal ugyanúgy formázzon. */
+import type { Lang, Text } from '../i18n/lang.ts'
 
-export const NOT_RECORDED = 'Not recorded'
+/** A hiányzó érték jelölése. Soha nem helyettesítjük becsült értékkel. */
+export const NOT_RECORDED: Text = { hu: 'Nincs adat', en: 'Not recorded' }
+
+const NUMBER_LOCALE: Record<Lang, string> = { hu: 'hu-HU', en: 'en-US' }
 
 export const hasText = (value: unknown): boolean =>
   value !== null && value !== undefined && String(value).trim().length > 0
 
 export const text = (value: unknown): string => (hasText(value) ? String(value).trim() : '')
 
-export const formatNumber = (value: number): string => value.toLocaleString('en-US')
+export const formatNumber = (value: number, lang: Lang = 'hu'): string => value.toLocaleString(NUMBER_LOCALE[lang])
 
-/** Hiányzó értéknél "Not recorded", számnál ezres tagolás, egységgel ha kell. */
-export function formatOptional(value: unknown, unit = ''): string {
-  if (!hasText(value)) return NOT_RECORDED
-  const shown = typeof value === 'number' ? formatNumber(value) : String(value).trim()
+/** Hiányzó értéknél "Nincs adat" / "Not recorded", számnál ezres tagolás, egységgel ha kell. */
+export function formatOptional(value: unknown, unit = '', lang: Lang = 'hu'): string {
+  if (!hasText(value)) return NOT_RECORDED[lang]
+  const shown = typeof value === 'number' ? formatNumber(value, lang) : String(value).trim()
   return unit ? `${shown} ${unit}` : shown
 }
 

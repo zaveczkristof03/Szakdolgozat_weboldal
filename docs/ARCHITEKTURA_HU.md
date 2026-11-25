@@ -57,7 +57,8 @@ webes felületen nincs jelszó és nincs írási végpont, tehát nincs mit felt
 | `App.tsx` | A „karmester”: letölti a katalógust, tárolja az összehasonlításra kijelölt adatbázisokat, és az URL alapján kiválasztja az oldalt. |
 | `api/client.ts` | A backend-hívás egy helyen. |
 | `hooks/useHashRoute.ts` | Navigáció a címsor `#/...` része alapján (Vissza gomb, linkelhető adatlap: `#/catalog?dataset=12`). |
-| `layout/Header.tsx` | Felső sáv a három menüponttal. |
+| `layout/Header.tsx` | Felső sáv a három menüponttal és a HU / EN nyelvváltóval. |
+| `i18n/` | Kétnyelvűség: `lang.ts` (nyelvek, mentés a böngészőbe), `useLang.ts` (a `t()` függvény), `strings.ts` (a felület összes felirata magyarul és angolul). |
 | `domain/` | **A szabályok és számítások**, React nélkül, ezért önállóan tesztelhetők. |
 | `features/` | Oldalanként egy mappa: `catalog`, `dataset` (adatlap), `compare`, `methodology`. |
 | `components/` | Közös építőelemek: `Modal` (felugró panel), `Value` (hiányzó érték jelölése). |
@@ -76,6 +77,15 @@ webes felületen nincs jelszó és nincs írási végpont, tehát nincs mit felt
 | `fair.ts` | FAIR-elvekhez kapcsolódó dokumentációs ellenőrzések (x / y, nem pontszám). |
 | `compare.ts` | Az összehasonlító tábla sorai, eltérések, kulcsfontosságú eltérések. |
 | `csv.ts` | Biztonságos CSV-export. |
+
+## Kétnyelvű felület
+
+A fejlécben HU / EN gombbal lehet nyelvet váltani; alapból magyar, és a böngésző
+megjegyzi a választást. Minden felirat egy `{ hu, en }` pár (`i18n/strings.ts`,
+illetve a `domain/` mezőnevei), a komponensek a `t()` függvénnyel választják ki az
+aktuálisat. Külső könyvtár nem kell hozzá. Az **adatértékek nem fordulnak**:
+a kategória, annotáció, leírás és licenc a PhysioNet eredeti angol szövege, így a
+forrást pontosan idézik. Egy teszt ellenőrzi, hogy minden mezőnek van magyar és angol neve.
 
 ## A dizájn elvei (erre is rákérdezhetnek)
 

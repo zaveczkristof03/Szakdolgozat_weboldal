@@ -10,6 +10,8 @@ import { evaluateComparison, MAX_COMPARE_DATASETS } from '../../domain/compare.t
 import { datedFilename, downloadCsv } from '../../domain/csv.ts'
 import { NOT_RECORDED } from '../../domain/format.ts'
 import type { ECGDatabase } from '../../domain/types.ts'
+import { s } from '../../i18n/strings.ts'
+import { useLang } from '../../i18n/useLang.ts'
 
 type Props = {
   databases: ECGDatabase[]
@@ -19,56 +21,57 @@ type Props = {
 }
 
 export default function ComparePage({ databases, compareIds, onToggle, onReset }: Props) {
+  const { lang, t } = useLang()
   const [differencesOnly, setDifferencesOnly] = useState(false)
   const selected = useMemo(() => compareIds.map((id) => databases.find((db) => db.id === id)).filter((db): db is ECGDatabase => Boolean(db)), [databases, compareIds])
-  const rows = useMemo(() => evaluateComparison(selected, { differencesOnly, showMissing: true }), [selected, differencesOnly])
+  const rows = useMemo(() => evaluateComparison(selected, { differencesOnly, showMissing: true }, lang), [selected, differencesOnly, lang])
   const available = databases.filter((db) => !compareIds.includes(db.id))
   const full = compareIds.length >= MAX_COMPARE_DATASETS
 
   const exportComparison = () => {
     const csv: unknown[][] = [['metadata_group', 'metadata_field', 'key_difference', ...selected.map((db) => db.name)]]
-    for (const row of rows) csv.push([row.group, row.label, row.key && row.different ? 'yes' : 'no', ...row.values.map((value) => value ?? NOT_RECORDED)])
+    for (const row of rows) csv.push([t(row.group), t(row.label), row.key && row.different ? 'yes' : 'no', ...row.values.map((value) => value ?? t(NOT_RECORDED))])
     downloadCsv(datedFilename('ecg-dataset-comparison'), csv)
   }
 
   return (
     <section className="compare-page" aria-labelledby="compare-heading">
       <div className="results-bar">
-        <h1 id="compare-heading" className="results-heading">Compare datasets</h1>
+        <h1 id="compare-heading" className="results-heading">{t(s.compare.title)}</h1>
         <div className="results-actions">
-          <button type="button" className="button button-quiet" onClick={exportComparison} disabled={!selected.length}>Export CSV</button>
-          <button type="button" className="link-button" onClick={onReset} disabled={!compareIds.length}>Clear selection</button>
+          <button type="button" className="button button-quiet" onClick={exportComparison} disabled={!selected.length}>{t(s.compare.exportCsv)}</button>
+          <button type="button" className="link-button" onClick={onReset} disabled={!compareIds.length}>{t(s.compare.clear)}</button>
         </div>
       </div>
 
       <div className="compare-controls">
         <label className="field field-inline">
-          <span className="field-label">Add a dataset</span>
+          <span className="field-label">{t(s.compare.add)}</span>
           <select value="" onChange={(event) => event.target.value && onToggle(Number(event.target.value))} disabled={full}>
-            <option value="">{full ? `Maximum of ${MAX_COMPARE_DATASETS} selected` : 'Choose…'}</option>
+            <option value="">{t(full ? s.compare.max(MAX_COMPARE_DATASETS) : s.compare.choose)}</option>
             {available.map((db) => <option key={db.id} value={db.id}>{db.name}</option>)}
           </select>
         </label>
         <label className="checkbox">
           <input type="checkbox" checked={differencesOnly} onChange={(event) => setDifferencesOnly(event.target.checked)} disabled={selected.length < 2} />
-          Only show differences
+          {t(s.compare.differencesOnly)}
         </label>
       </div>
 
       {selected.length === 0 ? (
         <p className="empty-block">
-          No datasets selected. Tick the box next to a dataset in the <a href="#/catalog">catalog</a>, or add one above.
+          {t(s.compare.emptyBefore)} <a href="#/catalog">{t(s.compare.emptyLink)}</a>{t(s.compare.emptyAfter)}
         </p>
       ) : (
         <div className="table-scroll">
           <table className="data-table compare-table">
             <thead>
               <tr>
-                <th scope="col" className="compare-label-col">Field</th>
+                <th scope="col" className="compare-label-col">{t(s.compare.field)}</th>
                 {selected.map((db) => (
                   <th key={db.id} scope="col">
                     <span className="compare-name">{db.name}</span>
-                    <button type="button" className="link-button" onClick={() => onToggle(db.id)} aria-label={`Remove ${db.name} from comparison`}>Remove</button>
+                    <button type="button" className="link-button" onClick={() => onToggle(db.id)} aria-label={t(s.compare.removeLabel(db.name))}>{t(s.compare.remove)}</button>
                   </th>
                 ))}
               </tr>
@@ -78,16 +81,16 @@ export default function ComparePage({ databases, compareIds, onToggle, onReset }
                 const startsGroup = index === 0 || rows[index - 1].group !== row.group
                 const isKey = row.key && row.different && selected.length > 1
                 return (
-                  <Fragment key={`${row.group}-${row.label}`}>
-                    {startsGroup && <tr className="group-row"><th colSpan={selected.length + 1} scope="colgroup">{row.group}</th></tr>}
+                  <Fragment key={`${row.group.en}-${row.label.en}`}>
+                    {startsGroup && <tr className="group-row"><th colSpan={selected.length + 1} scope="colgroup">{t(row.group)}</th></tr>}
                     <tr className={isKey ? 'is-key-difference' : undefined}>
                       <th scope="row">
-                        {row.label}
-                        {isKey && <span className="key-mark" title="Key difference for research use"> (differs)</span>}
+                        {t(row.label)}
+                        {isKey && <span className="key-mark" title={t(s.compare.differsHint)}> ({t(s.compare.differs)})</span>}
                       </th>
                       {row.values.map((value, valueIndex) => (
                         <td key={selected[valueIndex].id}>
-                          {value === null || value.trim() === '' ? <span className="value-missing">{NOT_RECORDED}</span> : value}
+                          {value === null || value.trim() === '' ? <span className="value-missing">{t(NOT_RECORDED)}</span> : value}
                         </td>
                       ))}
                     </tr>
@@ -95,7 +98,7 @@ export default function ComparePage({ databases, compareIds, onToggle, onReset }
                 )
               })}
               {!rows.length && (
-                <tr><td colSpan={selected.length + 1} className="empty-row">The selected datasets do not differ in any field.</td></tr>
+                <tr><td colSpan={selected.length + 1} className="empty-row">{t(s.compare.noDifference)}</td></tr>
               )}
             </tbody>
           </table>
@@ -103,8 +106,7 @@ export default function ComparePage({ databases, compareIds, onToggle, onReset }
       )}
 
       <p className="footnote">
-        Rows marked “differs” are key differences for research use: size, sampling rate, leads, annotations, file format or license.
-        Record counts are not the number of unique people.
+        {t(s.compare.footnote)}
       </p>
     </section>
   )

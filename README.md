@@ -10,7 +10,9 @@ React/Vite frontend, read-only FastAPI/SQLite backend. Thesis project.
 - **Compare**: up to four datasets side by side, with key differences marked.
 - **Methodology**: where the data comes from, how “Documented” is counted, the FAIR-related checks and the limitations.
 
-Missing values are shown as “Not recorded” and are never replaced by estimates. Records and subjects are always kept separate.
+The interface is available in Hungarian (default) and English via the HU / EN switch in the header.
+
+Missing values are shown as “Not recorded” (“Nincs adat”) and are never replaced by estimates. Records and subjects are always kept separate.
 
 See [`HASZNALATI_UTMUTATO_HU.md`](HASZNALATI_UTMUTATO_HU.md) for the Hungarian user guide and [`docs/ARCHITEKTURA_HU.md`](docs/ARCHITEKTURA_HU.md) for a beginner-friendly map of the code.
 

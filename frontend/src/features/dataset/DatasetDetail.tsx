@@ -12,6 +12,8 @@ import { doiUrl, lightwaveUrl, safeExternalUrl } from '../../domain/format.ts'
 import type { ECGDatabase } from '../../domain/types.ts'
 import Modal from '../../components/Modal.tsx'
 import Value from '../../components/Value.tsx'
+import { s } from '../../i18n/strings.ts'
+import { useLang } from '../../i18n/useLang.ts'
 
 type Props = {
   database: ECGDatabase
@@ -48,58 +50,59 @@ export default function DatasetDetail({ database: db, inComparison, compareFull,
   const lightwave = lightwaveUrl(db.lightwave_database_id)
   const completeness = getCompleteness(db)
   const fair = getFairProfile(db)
+  const { t } = useLang()
 
   return (
-    <Modal titleId="dataset-title" title={db.name} onClose={onClose} closeLabel="Close dataset details" className="drawer">
-      {db.short_name && <p className="detail-code">{db.short_name}{db.version ? ` · version ${db.version}` : ''}</p>}
-      <p className="detail-description">{db.description || 'No description has been recorded for this dataset.'}</p>
+    <Modal titleId="dataset-title" title={db.name} onClose={onClose} closeLabel={t(s.detail.close)} className="drawer">
+      {db.short_name && <p className="detail-code">{db.short_name}{db.version ? ` · ${t(s.detail.version)} ${db.version}` : ''}</p>}
+      <p className="detail-description">{db.description || t(s.detail.noDescription)}</p>
 
       <div className="detail-actions">
         <button type="button" className="button" onClick={() => onToggleCompare(db.id)} disabled={!inComparison && compareFull}>
-          {inComparison ? 'Remove from comparison' : compareFull ? 'Comparison is full (4)' : 'Add to comparison'}
+          {t(inComparison ? s.detail.removeFromCompare : compareFull ? s.detail.compareFull : s.detail.addToCompare)}
         </button>
-        {sourceUrl && <a className="button button-quiet" href={sourceUrl} target="_blank" rel="noopener noreferrer">Open on PhysioNet</a>}
-        {lightwave && <a className="button button-quiet" href={lightwave} target="_blank" rel="noopener noreferrer">View signals in LightWAVE</a>}
+        {sourceUrl && <a className="button button-quiet" href={sourceUrl} target="_blank" rel="noopener noreferrer">{t(s.detail.openPhysionet)}</a>}
+        {lightwave && <a className="button button-quiet" href={lightwave} target="_blank" rel="noopener noreferrer">{t(s.detail.openLightwave)}</a>}
       </div>
 
-      <FactList title="Size" facts={[
-        { label: 'Records', value: <><Value value={db.records} />{db.records_label && <span className="fact-note"> · {db.records_label}</span>}</> },
-        { label: 'Subjects', value: <Value value={db.subject_count} /> },
-        { label: 'Recording duration', value: <Value value={db.duration} /> },
+      <FactList title={t(s.detail.size)} facts={[
+        { label: t(s.detail.records), value: <><Value value={db.records} />{db.records_label && <span className="fact-note"> · {db.records_label}</span>}</> },
+        { label: t(s.detail.subjects), value: <Value value={db.subject_count} /> },
+        { label: t(s.detail.duration), value: <Value value={db.duration} /> },
       ]} />
 
-      <FactList title="Signal and annotations" facts={[
-        { label: 'Sampling rate', value: <Value value={db.frequency} unit="Hz" /> },
-        { label: 'ECG leads', value: <Value value={db.leads} /> },
-        { label: 'Clinical focus', value: db.category },
-        { label: 'Annotations', value: <Value value={db.annotations} /> },
-        { label: 'File format', value: <Value value={db.file_format} /> },
+      <FactList title={t(s.detail.signal)} facts={[
+        { label: t(s.detail.samplingRate), value: <Value value={db.frequency} unit="Hz" /> },
+        { label: t(s.detail.leads), value: <Value value={db.leads} /> },
+        { label: t(s.detail.category), value: db.category },
+        { label: t(s.detail.annotations), value: <Value value={db.annotations} /> },
+        { label: t(s.detail.fileFormat), value: <Value value={db.file_format} /> },
       ]} />
 
-      <FactList title="Identification and reuse" facts={[
+      <FactList title={t(s.detail.reuse)} facts={[
         { label: 'DOI', value: link(doiUrl(db.doi), db.doi) },
-        { label: 'Source ID', value: <Value value={db.source_database_id} /> },
-        { label: 'License', value: <Value value={db.license} /> },
-        { label: 'Access', value: <Value value={db.access_conditions} /> },
-        { label: 'Provenance', value: link(safeExternalUrl(db.provenance_url), db.provenance_url) },
-        { label: 'Last verified', value: <Value value={db.last_verified} /> },
+        { label: t(s.detail.sourceId), value: <Value value={db.source_database_id} /> },
+        { label: t(s.detail.license), value: <Value value={db.license} /> },
+        { label: t(s.detail.access), value: <Value value={db.access_conditions} /> },
+        { label: t(s.detail.provenance), value: link(safeExternalUrl(db.provenance_url), db.provenance_url) },
+        { label: t(s.detail.lastVerified), value: <Value value={db.last_verified} /> },
       ]} />
 
       <section className="detail-section">
-        <h3>Documentation</h3>
+        <h3>{t(s.detail.documentation)}</h3>
         <p>
-          <strong>{completeness.present} of {completeness.total}</strong> assessed fields are recorded.
-          {completeness.missing.length > 0 && <> Missing: {completeness.missing.map((field) => field.label).join(', ')}.</>}
+          <strong>{t(s.detail.completeness(completeness.present, completeness.total))}</strong>
+          {completeness.missing.length > 0 && <> {t(s.detail.missing)}: {completeness.missing.map((field) => t(field.label)).join(', ')}.</>}
         </p>
         <table className="fair-table">
-          <caption>Documentation checks related to the FAIR principles. This is not a FAIR certification.</caption>
+          <caption>{t(s.detail.fairCaption)}</caption>
           <tbody>
             {fair.map((dimension) => (
               <tr key={dimension.key}>
-                <th scope="row">{dimension.name}</th>
+                <th scope="row">{t(dimension.name)}</th>
                 <td className="numeric">{dimension.documented}/{dimension.total}</td>
                 <td>
-                  {dimension.criteria.filter((criterion) => !criterion.documented).map((criterion) => `Missing: ${criterion.label}`).join('; ') || 'All checks documented'}
+                  {dimension.criteria.filter((criterion) => !criterion.documented).map((criterion) => `${t(s.detail.missing)}: ${t(criterion.label)}`).join('; ') || t(s.detail.allChecks)}
                 </td>
               </tr>
             ))}
@@ -107,7 +110,7 @@ export default function DatasetDetail({ database: db, inComparison, compareFull,
         </table>
       </section>
 
-      <p className="footnote">Check the official documentation and license on PhysioNet before reusing the data.</p>
+      <p className="footnote">{t(s.detail.footnote)}</p>
     </Modal>
   )
 }

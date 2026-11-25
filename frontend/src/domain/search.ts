@@ -28,7 +28,8 @@ export const emptyCatalogFilters: CatalogFilters = {
   fileFormat: 'all',
 }
 
-export const LICENSE_NOT_RECORDED = 'Not recorded'
+/** Belső kulcs a licenc nélküli rekordokhoz (a szűrőben fordítva jelenik meg). */
+export const LICENSE_NOT_RECORDED = 'not-recorded'
 export const licenseName = (db: ECGDatabase): string => db.license || LICENSE_NOT_RECORDED
 
 /** A szabad szöveges keresés ezekben a mezőkben keres. */

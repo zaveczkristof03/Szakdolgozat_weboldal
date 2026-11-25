@@ -15,6 +15,8 @@ import { MAX_COMPARE_DATASETS, toggleCompareSelection } from './domain/compare.t
 import type { ECGDatabase } from './domain/types.ts'
 import { useHashRoute } from './hooks/useHashRoute.ts'
 import Header from './layout/Header.tsx'
+import { s } from './i18n/strings.ts'
+import { useLang } from './i18n/useLang.ts'
 import CatalogPage from './features/catalog/CatalogPage.tsx'
 import ComparePage from './features/compare/ComparePage.tsx'
 import MethodologyPage from './features/methodology/MethodologyPage.tsx'
@@ -24,6 +26,7 @@ type LoadState = 'loading' | 'ready' | 'error'
 
 export default function App() {
   const { route, navigate } = useHashRoute()
+  const { t } = useLang()
   const [databases, setDatabases] = useState<ECGDatabase[]>([])
   const [loadState, setLoadState] = useState<LoadState>('loading')
   const [reloadKey, setReloadKey] = useState(0)
@@ -49,7 +52,7 @@ export default function App() {
 
   const toggleCompare = (id: number) => {
     const result = toggleCompareSelection(compareIds, id)
-    setNotice(result.limitReached ? `You can compare up to ${MAX_COMPARE_DATASETS} datasets. Remove one first.` : '')
+    setNotice(result.limitReached ? t(s.app.compareLimit(MAX_COMPARE_DATASETS)) : '')
     setCompareIds(result.ids)
   }
 
@@ -76,16 +79,16 @@ export default function App() {
       <main className="page">
         {notice && (
           <p className="notice" role="status">
-            {notice} <button type="button" className="link-button" onClick={() => setNotice('')}>Dismiss</button>
+            {notice} <button type="button" className="link-button" onClick={() => setNotice('')}>{t(s.app.dismiss)}</button>
           </p>
         )}
 
-        {loadState === 'loading' && <p className="status-line">Loading datasets…</p>}
+        {loadState === 'loading' && <p className="status-line">{t(s.app.loading)}</p>}
 
         {loadState === 'error' && (
           <div className="notice notice-error" role="alert">
-            <p><strong>The catalog could not be loaded.</strong> Check that the backend is running at 127.0.0.1:8000.</p>
-            <button type="button" className="button" onClick={retry}>Try again</button>
+            <p><strong>{t(s.app.loadErrorTitle)}</strong> {t(s.app.loadErrorHint)}</p>
+            <button type="button" className="button" onClick={retry}>{t(s.app.retry)}</button>
           </div>
         )}
 

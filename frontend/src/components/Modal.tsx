@@ -6,6 +6,8 @@
  * az ablakot megnyitották. Egy helyen van megírva, így minden ablak így viselkedik.
  */
 import { useEffect, useRef, type ReactNode } from 'react'
+import { s as strings } from '../i18n/strings.ts'
+import { useLang } from '../i18n/useLang.ts'
 
 type Props = {
   titleId: string
@@ -19,7 +21,8 @@ type Props = {
 
 const FOCUSABLE = 'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
 
-export default function Modal({ titleId, title, onClose, children, className = '', closeDisabled = false, closeLabel = 'Close' }: Props) {
+export default function Modal({ titleId, title, onClose, children, className = '', closeDisabled = false, closeLabel }: Props) {
+  const { t } = useLang()
   const dialogRef = useRef<HTMLElement>(null)
   const onCloseRef = useRef(onClose)
   const closeDisabledRef = useRef(closeDisabled)
@@ -72,8 +75,8 @@ export default function Modal({ titleId, title, onClose, children, className = '
       <section ref={dialogRef} className={`modal ${className}`} role="dialog" aria-modal="true" aria-labelledby={titleId} tabIndex={-1}>
         <div className="modal-heading">
           <h2 id={titleId}>{title}</h2>
-          <button type="button" className="modal-close" onClick={onClose} disabled={closeDisabled} aria-label={closeLabel}>
-            Close
+          <button type="button" className="modal-close" onClick={onClose} disabled={closeDisabled} aria-label={closeLabel ?? t(strings.app.close)}>
+            {t(strings.app.close)}
           </button>
         </div>
         <div className="modal-body">{children}</div>

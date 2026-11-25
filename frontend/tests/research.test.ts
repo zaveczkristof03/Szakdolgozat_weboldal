@@ -21,6 +21,11 @@ import {
   type ECGDatabase,
 } from '../src/domain/research.ts'
 import { formatHash, parseHash } from '../src/hooks/useHashRoute.ts'
+import { formatOptional } from '../src/domain/format.ts'
+import { completenessFields } from '../src/domain/completeness.ts'
+import { comparisonRows } from '../src/domain/compare.ts'
+import { fairDefinitions } from '../src/domain/fair.ts'
+import { parseLang } from '../src/i18n/lang.ts'
 
 const afdb: ECGDatabase = {
   id: 1,
@@ -75,7 +80,7 @@ test('metadata completeness includes the core numeric fields', () => {
   const profile = getCompleteness({ ...afdb, subject_count: null, frequency: null })
   assert.equal(profile.total, 16)
   assert.equal(profile.present, 14)
-  assert.deepEqual(profile.missing.map((field) => field.label), ['Subject count', 'Sampling frequency'])
+  assert.deepEqual(profile.missing.map((field) => field.label.hu), ['Személyszám', 'Mintavételezési frekvencia'])
 })
 
 test('FAIR checks are counted, not scored, and react to real documentation gaps', () => {
@@ -90,9 +95,9 @@ test('FAIR checks are counted, not scored, and react to real documentation gaps'
 test('comparison marks key differences and can hide missing rows', () => {
   const other = { ...afdb, id: 2, frequency: 500, doi: null }
   const rows = evaluateComparison([afdb, other], { differencesOnly: true, showMissing: true })
-  const frequency = rows.find((row) => row.label === 'Sampling frequency')
+  const frequency = rows.find((row) => row.label.hu === 'Mintavételezés')
   assert.ok(frequency?.different && frequency.key)
-  assert.equal(evaluateComparison([afdb, other], { differencesOnly: false, showMissing: false }).some((row) => row.label === 'DOI'), false)
+  assert.equal(evaluateComparison([afdb, other], { differencesOnly: false, showMissing: false }).some((row) => row.label.en === 'DOI'), false)
 })
 
 test('comparison selection never exceeds the four-dataset limit', () => {
@@ -117,4 +122,24 @@ test('hash routes round-trip and fall back to the catalog', () => {
   assert.deepEqual(parseHash('#/unknown'), { page: 'catalog', datasetId: null })
   assert.equal(formatHash({ page: 'methodology', datasetId: null }), '#/methodology')
   assert.deepEqual(parseHash('#/finder'), { page: 'catalog', datasetId: null })
+})
+
+test('missing values and numbers are shown in the selected language', () => {
+  assert.equal(formatOptional(null, '', 'hu'), 'Nincs adat')
+  assert.equal(formatOptional(null, '', 'en'), 'Not recorded')
+  assert.equal(formatOptional(45152, '', 'en'), '45,152')
+  assert.equal(parseLang('en'), 'en')
+  assert.equal(parseLang('de'), 'hu')
+  assert.equal(parseLang(null), 'hu')
+})
+
+test('every field, comparison row and FAIR check has both a Hungarian and an English label', () => {
+  const labels = [
+    ...completenessFields.flatMap((field) => [field.label, field.group]),
+    ...comparisonRows.flatMap((row) => [row.label, row.group]),
+    ...fairDefinitions.flatMap((dimension) => [dimension.name, ...dimension.checks.flatMap((check) => [check.label, check.evidence])]),
+  ]
+  for (const label of labels) {
+    assert.ok(label.hu.trim() && label.en.trim(), JSON.stringify(label))
+  }
 })
