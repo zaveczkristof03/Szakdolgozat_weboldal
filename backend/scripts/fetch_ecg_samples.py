@@ -40,10 +40,8 @@ PREFERRED_START_S = 10.0
 # rögzítjük, melyik felvételt használjuk. Minden kivétel indokolt:
 # - PTB-XL: a lista a 100 Hz-es lekicsinyített változattal kezdődik, a katalógus
 #   az eredeti 500 Hz-es felvételeket írja le.
-# - Challenge 2017: a gyökérben nincs RECORDS lista, a felvételek a training mappában vannak.
 RECORD_OVERRIDES: dict[str, str] = {
     "ptb-xl/1.0.3": "records500/00000/00001_hr",
-    "challenge-2017/1.0.0": "training/A00001",
 }
 # Legfeljebb ennyi felvételt próbálunk végig, ha az elsőnek nincs jelfájlja
 # (pl. az AFDB két felvételéhez csak fejléc tartozik).
