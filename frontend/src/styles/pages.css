@@ -157,8 +157,17 @@
   margin-bottom: 16px;
 }
 
+.compare-table {
+  /* Fix oszlopszélesség: 4 adatbázis is kifér vízszintes görgetés nélkül;
+     a hosszú értékek (pl. linkek) a cellán belül törnek. */
+  table-layout: fixed;
+}
+
+.compare-table th,
+.compare-table td { overflow-wrap: anywhere; }
+
 .compare-table thead th { vertical-align: bottom; white-space: normal; }
-.compare-label-col { width: 200px; }
+.compare-label-col { width: 170px; }
 
 .compare-name {
   display: block;
@@ -222,6 +231,10 @@
 
   .filters .field:first-child { grid-column: 1 / -1; }
   .filters .link-button { justify-self: start; }
+}
+
+@media (max-width: 720px) {
+  .compare-table { table-layout: auto; min-width: 560px; }
 }
 
 @media (max-width: 560px) {
