@@ -26,6 +26,7 @@ import { completenessFields } from '../src/domain/completeness.ts'
 import { comparisonRows } from '../src/domain/compare.ts'
 import { fairDefinitions } from '../src/domain/fair.ts'
 import { parseLang } from '../src/i18n/lang.ts'
+import { applyQuickFilter, isQuickFilterActive, quickFilters } from '../src/domain/quickFilters.ts'
 
 const afdb: ECGDatabase = {
   id: 1,
@@ -142,4 +143,13 @@ test('every field, comparison row and FAIR check has both a Hungarian and an Eng
   for (const label of labels) {
     assert.ok(label.hu.trim() && label.en.trim(), JSON.stringify(label))
   }
+})
+
+test('quick filters only set existing filters and are recognised as active', () => {
+  const twelveLead = quickFilters.find((quick) => quick.id === 'twelve-lead')!
+  const filters = applyQuickFilter(twelveLead)
+  assert.deepEqual(filters, { ...emptyCatalogFilters, leads: '12' })
+  assert.ok(isQuickFilterActive(twelveLead, filters))
+  assert.ok(!isQuickFilterActive(twelveLead, { ...filters, search: 'ptb' }))
+  assert.deepEqual(filterCatalog([afdb, { ...afdb, id: 2, leads: 12 }], filters).map((db) => db.id), [2])
 })

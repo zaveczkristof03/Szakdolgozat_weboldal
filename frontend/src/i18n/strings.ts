@@ -12,6 +12,8 @@ export const s = {
     title: tx('EKG MetaData Explorer', 'EKG MetaData Explorer'),
     mainMenu: tx('Fő menü', 'Main menu'),
     language: tx('Nyelv', 'Language'),
+    themeToDark: tx('Sötét mód', 'Dark mode'),
+    themeToLight: tx('Világos mód', 'Light mode'),
     pages: {
       catalog: tx('Katalógus', 'Catalog'),
       compare: tx('Összehasonlítás', 'Compare'),
@@ -27,6 +29,7 @@ export const s = {
   },
   catalog: {
     filters: tx('Szűrők', 'Filters'),
+    quickFilters: tx('Gyorsszűrők', 'Quick filters'),
     allCount: (n: number) => tx(`${n} EKG-adatbázis`, `${n} ECG datasets`),
     filteredCount: (shown: number, total: number) => tx(`${shown} / ${total} adatbázis`, `${shown} of ${total} datasets`),
     compareSelected: (n: number) => tx(`Kijelöltek összehasonlítása (${n})`, `Compare selected (${n})`),

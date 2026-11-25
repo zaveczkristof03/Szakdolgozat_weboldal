@@ -5,7 +5,7 @@ megvizsgálni és összehasonlítani őket. Nem elemez EKG-jeleket, és nem ad o
 kutatásmódszertani ajánlást.
 
 Három oldal van, a felső menüből érhetők el: **Katalógus**, **Összehasonlítás**, **Módszertan**.
-A jobb felső sarokban a **HU / EN** gombbal lehet nyelvet váltani (alapból magyar, a böngésző megjegyzi).
+A jobb felső sarokban a **HU / EN** gombbal lehet nyelvet váltani (alapból magyar), a **Sötét mód / Világos mód** gombbal pedig témát. Mindkettőt megjegyzi a böngésző; a téma első látogatáskor a rendszerbeállítást követi.
 Az adatértékek (kategória, annotáció, leírás, licenc) mindkét nyelven a PhysioNet eredeti angol szövegei.
 Minden oldalnak és adatlapnak saját címe van (`#/catalog`, `#/compare`, `#/methodology`,
 `#/catalog?dataset=1`), így működik a böngésző Vissza gombja, és egy adatlapra linket lehet küldeni.
@@ -19,6 +19,7 @@ Bal oldalt a kereső és a szűrők, jobbra a találatok táblázata.
   A linkekben szándékosan nem, mert ott a szavak más értelemben is előfordulnak.
 - **Szűrők:** klinikai fókusz, annotációtípus, elvezetésszám, minimális mintavételezési
   frekvencia, fájlformátum, licenc. Ha egy érték nincs rögzítve, az nem felel meg a szűrőnek.
+- **Gyorsszűrők:** a táblázat fölötti gombok egy kattintással beállítják a gyakori szűréseket (12 elvezetéses, pitvarfibrilláció, legalább 500 Hz, szívütés- vagy hullámhatár-annotáció). A szám a találatok száma. Újrakattintásra a szűrés törlődik.
 - **Rendezés:** az oszlopfejlécre kattintva. A „Not recorded” értékek mindig a lista végére kerülnek.
 - **Documented:** a 16 vizsgált mezőből hány van kitöltve (lásd Methodology).
 - **Összehasonlítás:** a sor elején lévő jelölőnégyzettel, legfeljebb négy adatbázis.

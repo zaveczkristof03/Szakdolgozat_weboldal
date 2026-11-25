@@ -56,6 +56,7 @@ webes felületen nincs jelszó és nincs írási végpont, tehát nincs mit felt
 | `main.tsx` | Elindítja a React alkalmazást, betölti a stílusokat. |
 | `App.tsx` | A „karmester”: letölti a katalógust, tárolja az összehasonlításra kijelölt adatbázisokat, és az URL alapján kiválasztja az oldalt. |
 | `api/client.ts` | A backend-hívás egy helyen. |
+| `hooks/useTheme.ts` | Világos / sötét mód: először a rendszerbeállítást követi, utána a választást megjegyzi. |
 | `hooks/useHashRoute.ts` | Navigáció a címsor `#/...` része alapján (Vissza gomb, linkelhető adatlap: `#/catalog?dataset=12`). |
 | `layout/Header.tsx` | Felső sáv a három menüponttal és a HU / EN nyelvváltóval. |
 | `i18n/` | Kétnyelvűség: `lang.ts` (nyelvek, mentés a böngészőbe), `useLang.ts` (a `t()` függvény), `strings.ts` (a felület összes felirata magyarul és angolul). |
@@ -72,6 +73,7 @@ webes felületen nincs jelszó és nincs írási végpont, tehát nincs mit felt
 | `types.ts` | Az adatbázis-rekord TypeScript-típusa. |
 | `format.ts` | Számformázás, „Not recorded”, biztonságos linkek. |
 | `matching.ts` | Az annotációtípus-szűrő kifejezései (csak az annotáció mezőt nézi). |
+| `quickFilters.ts` | Gyorsszűrők (pl. „12 elvezetéses”): csak a meglévő szűrőket állítják be, így ugyanazt adják, mint a kézi szűrés. |
 | `search.ts` | Szabad szöveges keresés, szűrők, rendezés (a hiányzó érték mindig a lista végére kerül). |
 | `completeness.ts` | 16 mező kitöltöttsége („Documented: 15/16”). |
 | `fair.ts` | FAIR-elvekhez kapcsolódó dokumentációs ellenőrzések (x / y, nem pontszám). |
@@ -92,6 +94,7 @@ forrást pontosan idézik. Egy teszt ellenőrzi, hogy minden mezőnek van magyar
 A felület egy tudományos adatkatalógusra hasonlít, nem marketingoldalra:
 
 - egyetlen kiemelőszín (sötétkék) a linkekhez és a kijelöléshez;
+- minden szín CSS-változó (`styles/base.css`), a sötét mód csak ezek értékét cseréli le, így nincs két külön stíluslap;
 - nincs színátmenet, árnyék, dekoratív ikon és „kártya”, a tartalmat vékony vonalak tagolják;
 - a fő nézet egy rendezhető táblázat, mert a felhasználó számokat hasonlít össze;
 - a számok egyforma szélességű számjegyekkel, jobbra igazítva jelennek meg, így oszlopban összevethetők;

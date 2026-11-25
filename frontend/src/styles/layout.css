@@ -77,9 +77,27 @@
 }
 
 /* Nyelvváltó (HU / EN) a fejléc jobb szélén. */
-.lang-switch {
+.header-tools {
   margin-left: auto;
   align-self: center;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.theme-toggle {
+  padding: 4px 10px;
+  border: 1px solid var(--rule-strong);
+  border-radius: var(--radius);
+  background: var(--paper);
+  color: var(--ink-muted);
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+.theme-toggle:hover { color: var(--ink); }
+
+.lang-switch {
   display: inline-flex;
   border: 1px solid var(--rule-strong);
   border-radius: var(--radius);
@@ -101,11 +119,11 @@
 .lang-switch button:hover { color: var(--ink); }
 
 .lang-switch button[aria-pressed='true'] {
-  background: var(--accent);
-  color: #fff;
+  background: var(--accent-solid);
+  color: var(--on-accent);
 }
 
 @media (max-width: 720px) {
-  .lang-switch { position: absolute; top: 10px; right: 16px; }
+  .header-tools { position: absolute; top: 10px; right: 16px; }
   .site-header { position: relative; }
 }

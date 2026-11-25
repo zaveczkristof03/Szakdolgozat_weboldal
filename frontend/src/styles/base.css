@@ -19,6 +19,10 @@
   --accent: #1d4f91;
   --accent-hover: #163d70;
   --accent-tint: #edf2f9;
+  --accent-solid: #1d4f91;
+  --on-accent: #ffffff;
+  --row-hover: #fafafa;
+  --backdrop: rgb(20 22 26 / 0.35);
   --danger: #9b2c2c;
   --danger-tint: #fbeeee;
 
@@ -35,6 +39,32 @@
   color: var(--ink);
   background: var(--page);
   -webkit-font-smoothing: antialiased;
+}
+
+/*
+ * Sötét mód: ugyanazok a változók, sötét értékekkel. Minden más stílus ezekre
+ * a változókra hivatkozik, ezért csak itt kell színt váltani.
+ * A kontraszt itt is legalább WCAG AA szintű a szövegeknél.
+ */
+:root[data-theme='dark'] {
+  --paper: #1b1e23;
+  --page: #131518;
+  --ink: #e6e7ea;
+  --ink-muted: #a6abb4;
+  --ink-faint: #7d838d;
+  --rule: #2d3239;
+  --rule-strong: #454b55;
+  --accent: #8db4ec;
+  --accent-hover: #4a7cc2;
+  --accent-tint: #1e2a3b;
+  --accent-solid: #3a6aae;
+  --on-accent: #ffffff;
+  --row-hover: #20242a;
+  --backdrop: rgb(0 0 0 / 0.55);
+  --danger: #e59393;
+  --danger-tint: #3a2124;
+
+  color-scheme: dark;
 }
 
 *,

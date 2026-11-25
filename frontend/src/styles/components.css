@@ -6,10 +6,10 @@
   align-items: center;
   min-height: 34px;
   padding: 0 14px;
-  border: 1px solid var(--accent);
+  border: 1px solid var(--accent-solid);
   border-radius: var(--radius);
-  background: var(--accent);
-  color: #fff;
+  background: var(--accent-solid);
+  color: var(--on-accent);
   font-weight: 500;
   font-size: 0.93rem;
   text-decoration: none;
@@ -17,7 +17,7 @@
   white-space: nowrap;
 }
 
-.button:hover { background: var(--accent-hover); border-color: var(--accent-hover); color: #fff; }
+.button:hover { background: var(--accent-hover); border-color: var(--accent-hover); color: var(--on-accent); }
 
 .button-quiet {
   background: var(--paper);
@@ -87,7 +87,7 @@ input[type='checkbox'] {
   width: 16px;
   height: 16px;
   margin: 0;
-  accent-color: var(--accent);
+  accent-color: var(--accent-solid);
   cursor: pointer;
 }
 
@@ -129,7 +129,7 @@ input[type='checkbox']:disabled { cursor: not-allowed; }
 .data-table thead th.numeric { font-family: var(--font-sans); }
 
 .data-table tbody tr:last-child > * { border-bottom: 0; }
-.data-table tbody tr:hover { background: #fafafa; }
+.data-table tbody tr:hover { background: var(--row-hover); }
 .data-table tbody tr.is-selected { background: var(--accent-tint); }
 
 .data-table.compact th,
@@ -181,7 +181,7 @@ input[type='checkbox']:disabled { cursor: not-allowed; }
   position: fixed;
   inset: 0;
   z-index: 50;
-  background: rgb(20 22 26 / 0.35);
+  background: var(--backdrop);
   display: flex;
   justify-content: center;
   align-items: flex-start;

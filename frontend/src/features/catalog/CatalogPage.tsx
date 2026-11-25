@@ -16,6 +16,7 @@ import Value from '../../components/Value.tsx'
 import { s } from '../../i18n/strings.ts'
 import { useLang } from '../../i18n/useLang.ts'
 import CatalogFilters from './CatalogFilters.tsx'
+import QuickFilters from './QuickFilters.tsx'
 
 type Props = {
   databases: ECGDatabase[]
@@ -61,6 +62,8 @@ export default function CatalogPage({ databases, compareIds, onOpen, onToggleCom
             </button>
           </div>
         </div>
+
+        <QuickFilters databases={databases} filters={filters} onChange={setFilters} />
 
         <div className="table-scroll">
           <table className="data-table">
