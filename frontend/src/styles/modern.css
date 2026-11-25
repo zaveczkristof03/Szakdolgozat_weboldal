@@ -1,0 +1,313 @@
+/*
+ * KÍSÉRLETI „modern” dizájnréteg (dizajn-kiserlet-modern ág).
+ *
+ * Koncepció: „műszerpult” – egy laborműszer kezelőfelülete, nem marketingoldal.
+ * - Lebegő, kapszula alakú menüsor üveghatással; minden más lapos.
+ * - Nagy, szorosan szedett címek (szerkesztőségi tipográfia), mellettük
+ *   apró, nagybetűs mono címkék, mint egy műszer feliratai.
+ * - Lekerekített, hajszálvonalas felületek, árnyék csak a lebegő elemeken.
+ * - Egy kiemelőszín (zöld), takarékosan: aktív állapot, fő gomb, jel.
+ *
+ * Az egész egyetlen fájl, amely a meglévő stílusokat írja felül: ha kiveszed
+ * az index.css-ből, visszaáll a korábbi dizájn.
+ */
+
+:root {
+  --page: #f3f4f1;
+  --paper: #ffffff;
+  --ink: #0f1311;
+  --ink-muted: #59605c;
+  --ink-faint: #8b918d;
+  --rule: rgb(15 19 17 / 0.08);
+  --rule-strong: rgb(15 19 17 / 0.16);
+  --row-hover: rgb(15 19 17 / 0.03);
+  --surface-2: #f7f8f5;
+  --radius: 10px;
+  --radius-lg: 18px;
+  --float-shadow: 0 1px 2px rgb(15 19 17 / 0.06), 0 8px 24px -8px rgb(15 19 17 / 0.18);
+  --glass: rgb(255 255 255 / 0.66);
+  --glass-strong: rgb(255 255 255 / 0.84);
+}
+
+:root[data-theme='dark'] {
+  --page: #0b0d0c;
+  --paper: #141816;
+  --ink: #e9ece9;
+  --ink-muted: #a1a8a3;
+  --ink-faint: #737a75;
+  --rule: rgb(255 255 255 / 0.07);
+  --rule-strong: rgb(255 255 255 / 0.14);
+  --row-hover: rgb(255 255 255 / 0.03);
+  --surface-2: #101311;
+  --accent-tint: rgb(61 220 151 / 0.09);
+  --float-shadow: 0 1px 2px rgb(0 0 0 / 0.4), 0 10px 30px -10px rgb(0 0 0 / 0.7);
+  --glass: rgb(20 24 22 / 0.62);
+  --glass-strong: rgb(20 24 22 / 0.84);
+}
+
+body { letter-spacing: -0.005em; }
+
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* ---- Lebegő kapszula-menü ---- */
+.site-header,
+:root .site-header {
+  background: transparent;
+  border: 0;
+  padding: 12px 24px 0;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  pointer-events: none;
+}
+
+.site-header-inner {
+  pointer-events: auto;
+  min-height: 52px;
+  padding: 0 8px 0 20px;
+  gap: 28px;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  background: var(--glass-strong);
+  box-shadow: var(--float-shadow);
+}
+
+@supports (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px)) {
+  .site-header-inner {
+    background: var(--glass);
+    -webkit-backdrop-filter: blur(18px) saturate(1.5);
+    backdrop-filter: blur(18px) saturate(1.5);
+  }
+}
+
+.site-title {
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.site-title::before {
+  content: '';
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  margin-right: 10px;
+  border-radius: 50%;
+  background: var(--accent);
+  vertical-align: 1px;
+}
+
+.site-nav { align-items: center; gap: 2px; }
+
+.site-nav a {
+  height: 36px;
+  padding: 0 14px;
+  border: 0;
+  border-radius: 999px;
+  margin: 0;
+  font-size: 0.92rem;
+}
+
+.site-nav a:hover { background: var(--row-hover); }
+
+.site-nav a[aria-current='page'] {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.site-nav a[aria-current='page'] .nav-count { color: var(--accent); }
+
+.theme-toggle,
+.lang-switch {
+  border-radius: 999px;
+  border-color: var(--rule-strong);
+  background: transparent;
+}
+
+.theme-toggle { padding: 6px 14px; }
+.lang-switch button { padding: 6px 12px; background: transparent; }
+
+.page { padding-top: 40px; }
+
+/* ---- Szerkesztőségi címek + műszer-címkék ---- */
+.results-heading,
+.page h1,
+.chooser-title {
+  font-size: clamp(1.9rem, 2.6vw, 2.8rem);
+  font-weight: 600;
+  letter-spacing: -0.035em;
+  line-height: 1.05;
+}
+
+.results-bar { margin-bottom: 18px; align-items: flex-end; }
+
+.field-label,
+.quick-filters-label,
+.data-table thead th,
+.detail-section h3,
+.fact-list dt,
+.ecg-scale,
+.group-row th {
+  font-family: var(--font-mono);
+  font-size: 0.7rem !important;
+  font-weight: 500;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+}
+
+.detail-section h3 { margin-bottom: 14px; }
+
+/* ---- Gombok, mezők, chipek ---- */
+.button {
+  min-height: 38px;
+  padding: 0 18px;
+  border-radius: 999px;
+}
+
+.button-quiet { background: transparent; border-color: var(--rule-strong); }
+.button-quiet:hover { background: var(--row-hover); }
+
+.field input,
+.field select {
+  min-height: 40px;
+  padding: 0 12px;
+  border: 1px solid transparent;
+  border-radius: var(--radius);
+  background: var(--surface-2);
+}
+
+.field input:hover,
+.field select:hover { border-color: var(--rule-strong); }
+
+.field input:focus,
+.field select:focus { border-color: var(--accent); outline: 3px solid var(--accent-tint); outline-offset: 0; }
+
+.chip {
+  padding: 6px 12px;
+  border-color: var(--rule-strong);
+  background: transparent;
+}
+
+.chip[aria-pressed='true'] { background: var(--ink); border-color: var(--ink); color: var(--paper); }
+.chip[aria-pressed='true'] .chip-count { color: var(--accent); opacity: 1; }
+
+/* ---- Felületek: lekerekített kártyák hajszálvonallal ---- */
+.catalog-sidebar {
+  padding: 20px;
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-lg);
+  background: var(--paper);
+}
+
+.table-scroll,
+.prose .data-table,
+.choice-list,
+.empty-block,
+.notice {
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.table-scroll { overflow-x: auto; }
+
+.data-table th,
+.data-table td { padding: 14px 16px; }
+
+.data-table thead th {
+  background: var(--paper);
+  border-bottom: 1px solid var(--rule);
+}
+
+.data-table tbody tr { transition: background-color 120ms ease; }
+.data-table tbody tr.is-selected { background: var(--accent-tint); }
+.data-table tbody tr.is-open { background: var(--accent-tint); }
+.data-table tbody tr.is-open > :first-child { box-shadow: inset 3px 0 0 var(--accent); }
+
+.dataset-link { font-weight: 600; letter-spacing: -0.01em; }
+
+.detail-panel {
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.detail-panel-heading { padding: 20px 22px 14px; border-bottom: 0; }
+
+.detail-panel-heading h2,
+.modal-heading h2 {
+  font-size: 1.45rem;
+  font-weight: 600;
+  letter-spacing: -0.025em;
+  line-height: 1.15;
+}
+
+.detail-panel-body { padding: 4px 22px 22px; }
+
+.modal-close {
+  border-radius: 999px;
+  border-color: var(--rule-strong);
+  background: transparent;
+  padding: 5px 12px;
+}
+
+.detail-section { border-top-color: var(--rule); }
+
+.ecg-strip { border-radius: 12px; border-color: var(--ecg-minor); }
+
+.overview-hint { border-left-color: var(--accent); }
+
+/* A felugró adatlap lebegő elem: kerekített sarok és árnyék. */
+.modal { border-radius: var(--radius-lg); border-color: var(--rule); box-shadow: var(--float-shadow); }
+.modal.drawer { border-radius: var(--radius-lg) 0 0 var(--radius-lg); }
+
+/* ---- Tartalmi oldalak ---- */
+.prose section h2 {
+  font-size: 1.5rem;
+  letter-spacing: -0.025em;
+}
+
+/* ---- Ragadós elemek a lebegő menü alatt ---- */
+.catalog-sidebar,
+.catalog-panel { top: 84px; }
+.detail-panel { max-height: calc(100vh - 104px); }
+
+@media (max-width: 720px) {
+  .site-header { padding: 8px 8px 0; position: relative; }
+
+  .site-header-inner {
+    border-radius: 22px;
+    padding: 12px 14px 6px;
+  }
+
+  .site-nav a { height: 34px; padding: 0 12px; }
+  .site-nav li:first-child a { padding-left: 12px; }
+  .header-tools { top: 14px; right: 14px; }
+  .page { padding-top: 24px; }
+}
+
+@media (max-width: 900px) {
+  .catalog-sidebar { padding: 16px; }
+}
+
+h2.results-heading { font-size: 1.35rem; letter-spacing: -0.02em; }
+
+.data-table thead .sort-button { font: inherit; letter-spacing: inherit; text-transform: inherit; color: inherit; }
+
+.chooser-title { font-size: 2rem; }
+
+@media (max-width: 720px) {
+  .site-header-inner {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    row-gap: 6px;
+  }
+
+  .site-header-inner > nav { grid-column: 1 / -1; min-width: 0; }
+  .header-tools { position: static; grid-row: 1; grid-column: 2; }
+  .site-title { grid-row: 1; grid-column: 1; }
+  .site-title { font-size: 0.72rem; white-space: normal; }
+}
