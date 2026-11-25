@@ -71,7 +71,14 @@
 
   .site-title { align-self: flex-start; }
 
-  .site-nav a { padding: 10px 10px 12px; }
+  .site-nav {
+    overflow-x: auto;
+    scrollbar-width: none;
+    margin: 0 -16px;
+    padding: 0 16px;
+  }
+
+  .site-nav a { padding: 10px 10px 12px; white-space: nowrap; }
   .site-nav li:first-child a { padding-left: 0; }
   .page { padding: 20px 16px 48px; }
 }

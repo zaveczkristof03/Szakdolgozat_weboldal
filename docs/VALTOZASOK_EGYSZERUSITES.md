@@ -19,7 +19,7 @@ rajzoltuk át.
 - **Felső menü** három ponttal (Catalog, Compare, Methodology) az oldalsáv helyett.
 - **Katalógus:** bal oldalt szűrők, jobbra rendezhető táblázat, jelölőnégyzet az összehasonlításhoz.
   A „Not recorded” értékek rendezéskor mindig a végére kerülnek.
-- **Adatlap:** jobbról nyíló panel, mögötte látszik a táblázat.
+- **Adatlap:** széles képernyőn (≥ 1600 px) állandó harmadik oszlop a táblázat mellett; amíg nincs kiválasztás, a katalógus ellenőrizhető tényeit mutatja. Keskenyebb képernyőn és mobilon jobbról nyíló panel.
 - **Methodology oldal:** adatforrás, olvasási szabályok, a „Documented” számítása, FAIR-ellenőrzések, korlátok.
 - **Dizájn:** IBM Plex betűk, egyetlen kiemelőszín, nincs színátmenet, árnyék, dísz-ikon és KPI-doboz.
   Az elvek: `docs/ARCHITEKTURA_HU.md`, „A dizájn elvei”.

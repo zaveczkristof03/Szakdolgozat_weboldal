@@ -6,7 +6,7 @@
  * - Az oszlopfejlécre kattintva lehet rendezni.
  * Adat: a teljes katalógus (props). Szűrés és rendezés: domain/search.ts.
  */
-import { useMemo, useState } from 'react'
+import { useMemo, useState, type ReactNode } from 'react'
 import { emptyCatalogFilters, filterCatalog, sortCatalog, type CatalogFilters as Filters, type SortKey, type SortState } from '../../domain/search.ts'
 import { MAX_COMPARE_DATASETS } from '../../domain/compare.ts'
 import { getCompleteness } from '../../domain/completeness.ts'
@@ -23,6 +23,9 @@ type Props = {
   compareIds: number[]
   onOpen: (id: number) => void
   onToggleCompare: (id: number) => void
+  /** Nagy képernyőn a harmadik oszlop tartalma (adatlap vagy áttekintés); kisebb képernyőn null. */
+  panel: ReactNode
+  openId: number | null
 }
 
 const columns: Array<{ key: SortKey; numeric?: boolean }> = [
@@ -34,7 +37,7 @@ const columns: Array<{ key: SortKey; numeric?: boolean }> = [
   { key: 'category' },
 ]
 
-export default function CatalogPage({ databases, compareIds, onOpen, onToggleCompare }: Props) {
+export default function CatalogPage({ databases, compareIds, onOpen, onToggleCompare, panel, openId }: Props) {
   const { t } = useLang()
   const [filters, setFilters] = useState<Filters>(emptyCatalogFilters)
   const [sort, setSort] = useState<SortState>({ key: 'name', direction: 'asc' })
@@ -45,7 +48,7 @@ export default function CatalogPage({ databases, compareIds, onOpen, onToggleCom
     setSort((current) => ({ key, direction: current.key === key && current.direction === 'asc' ? 'desc' : 'asc' }))
 
   return (
-    <div className="catalog-layout">
+    <div className={`catalog-layout${panel ? ' has-panel' : ''}`}>
       <aside className="catalog-sidebar" aria-label={t(s.catalog.filters)}>
         <CatalogFilters databases={databases} filters={filters} onChange={setFilters} />
       </aside>
@@ -89,7 +92,7 @@ export default function CatalogPage({ databases, compareIds, onOpen, onToggleCom
                 const selected = compareIds.includes(db.id)
                 const completeness = getCompleteness(db)
                 return (
-                  <tr key={db.id} className={selected ? 'is-selected' : undefined}>
+                  <tr key={db.id} className={[selected ? 'is-selected' : '', openId === db.id ? 'is-open' : ''].join(' ').trim() || undefined}>
                     <td className="col-select">
                       <input
                         type="checkbox"
@@ -101,7 +104,7 @@ export default function CatalogPage({ databases, compareIds, onOpen, onToggleCom
                       />
                     </td>
                     <td>
-                      <button type="button" className="dataset-link" onClick={() => onOpen(db.id)}>{db.name}</button>
+                      <button type="button" className="dataset-link" onClick={() => onOpen(db.id)} aria-current={openId === db.id ? 'true' : undefined}>{db.name}</button>
                       {db.short_name && <span className="dataset-code">{db.short_name}</span>}
                     </td>
                     <td className="numeric"><Value value={db.records} /></td>
@@ -129,6 +132,8 @@ export default function CatalogPage({ databases, compareIds, onOpen, onToggleCom
           {t(s.catalog.footnote1)} {t(s.catalog.footnote2)} <a href="#/methodology">{t(s.app.pages.methodology)}</a> {t(s.catalog.footnote3)}
         </p>
       </section>
+
+      {panel && <aside className="catalog-panel">{panel}</aside>}
     </div>
   )
 }

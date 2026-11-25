@@ -21,13 +21,16 @@ import CatalogPage from './features/catalog/CatalogPage.tsx'
 import ComparePage from './features/compare/ComparePage.tsx'
 import MethodologyPage from './features/methodology/MethodologyPage.tsx'
 import ChooserPage from './features/chooser/ChooserPage.tsx'
-import DatasetDetail from './features/dataset/DatasetDetail.tsx'
+import DatasetDetail, { DatasetPanel } from './features/dataset/DatasetDetail.tsx'
+import CatalogOverview from './features/catalog/CatalogOverview.tsx'
+import { useMediaQuery, WIDE_LAYOUT_QUERY } from './hooks/useMediaQuery.ts'
 
 type LoadState = 'loading' | 'ready' | 'error'
 
 export default function App() {
   const { route, navigate } = useHashRoute()
   const { t } = useLang()
+  const wide = useMediaQuery(WIDE_LAYOUT_QUERY)
   const [databases, setDatabases] = useState<ECGDatabase[]>([])
   const [loadState, setLoadState] = useState<LoadState>('loading')
   const [reloadKey, setReloadKey] = useState(0)
@@ -51,6 +54,16 @@ export default function App() {
 
   const openDataset = useMemo(() => databases.find((db) => db.id === route.datasetId) ?? null, [databases, route.datasetId])
 
+  // Nagy képernyőn a katalógus mellett állandó oszlopban látszik az adatlap; máshol becsúszó panel.
+  const showPanel = wide && route.page === 'catalog'
+  const detailProps = openDataset && {
+    database: openDataset,
+    inComparison: compareIds.includes(openDataset.id),
+    compareFull: compareIds.length >= MAX_COMPARE_DATASETS,
+    onClose: () => navigate({ datasetId: null }),
+    onToggleCompare: (id: number) => toggleCompare(id),
+  }
+
   const toggleCompare = (id: number) => {
     const result = toggleCompareSelection(compareIds, id)
     setNotice(result.limitReached ? t(s.app.compareLimit(MAX_COMPARE_DATASETS)) : '')
@@ -65,7 +78,13 @@ export default function App() {
   const renderPage = () => {
     switch (route.page) {
       case 'catalog':
-        return <CatalogPage databases={databases} compareIds={compareIds} onOpen={(id) => navigate({ datasetId: id })} onToggleCompare={toggleCompare} />
+        return (
+          <CatalogPage
+            databases={databases} compareIds={compareIds} onOpen={(id) => navigate({ datasetId: id })} onToggleCompare={toggleCompare}
+            openId={openDataset?.id ?? null}
+            panel={showPanel ? (detailProps ? <DatasetPanel key={detailProps.database.id} {...detailProps} /> : <CatalogOverview databases={databases} />) : null}
+          />
+        )
       case 'choose':
         return (
           <ChooserPage
@@ -104,15 +123,7 @@ export default function App() {
         {loadState === 'ready' && renderPage()}
       </main>
 
-      {openDataset && (
-        <DatasetDetail
-          database={openDataset}
-          inComparison={compareIds.includes(openDataset.id)}
-          compareFull={compareIds.length >= MAX_COMPARE_DATASETS}
-          onClose={() => navigate({ datasetId: null })}
-          onToggleCompare={toggleCompare}
-        />
-      )}
+      {detailProps && !showPanel && <DatasetDetail {...detailProps} />}
     </>
   )
 }

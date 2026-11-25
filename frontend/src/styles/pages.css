@@ -340,6 +340,51 @@
 .rule-list dt { font-weight: 600; margin-top: 12px; }
 .rule-list dd { margin: 2px 0 0; max-width: 72ch; }
 
+/* ---- Széles képernyő: harmadik oszlop az adatlapnak (master-detail) ---- */
+.catalog-layout.has-panel {
+  grid-template-columns: 220px minmax(0, 1fr) 440px;
+  gap: 28px;
+}
+
+.catalog-panel {
+  position: sticky;
+  top: 20px;
+}
+
+.detail-panel {
+  display: flex;
+  flex-direction: column;
+  max-height: calc(100vh - 40px);
+  background: var(--paper);
+  border: 1px solid var(--rule);
+}
+
+.detail-panel-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 16px 20px 12px;
+  border-bottom: 1px solid var(--rule);
+}
+
+.detail-panel-heading h2 { font-size: 1.15rem; }
+
+.detail-panel-body {
+  padding: 16px 20px 20px;
+  overflow-y: auto;
+}
+
+.overview-hint {
+  margin: 0 0 16px;
+  padding-left: 12px;
+  border-left: 2px solid var(--accent);
+  color: var(--ink-muted);
+}
+
+.data-table tbody tr.is-open { background: var(--accent-tint); }
+.data-table tbody tr.is-open > :first-child { box-shadow: inset 3px 0 0 var(--accent); }
+
 /* ---- Kis képernyő ---- */
 @media (max-width: 900px) {
   .catalog-layout { grid-template-columns: minmax(0, 1fr); gap: 20px; }

@@ -124,6 +124,19 @@ export const s = {
       'Rows marked “differs” are key differences for research use: size, sampling rate, leads, annotations, file format or license. Record counts are not the number of unique people.',
     ),
   },
+  overview: {
+    title: tx('Adatlap', 'Dataset details'),
+    hint: tx('Kattints egy adatbázis nevére a táblázatban, és itt jelennek meg a részletei.', 'Click a dataset name in the table to see its details here.'),
+    aboutTitle: tx('A katalógusról', 'About the catalog'),
+    datasets: tx('Adatbázisok', 'Datasets'),
+    datasetsValue: (n: number) => tx(`${n}, mind a PhysioNetről`, `${n}, all from PhysioNet`),
+    verified: tx('Ellenőrizve', 'Verified'),
+    complete: tx('Hiánytalanul dokumentált', 'Fully documented'),
+    completeValue: (complete: number, total: number, fields: number) => tx(`${complete} / ${total} (mind a ${fields} mező kitöltve)`, `${complete} of ${total} (all ${fields} fields recorded)`),
+    missing: tx('Hiányzik', 'Missing'),
+    missingValue: (n: number) => tx(`${n} adatbázisnál`, `in ${n} datasets`),
+    more: tx('A számítás részletei:', 'How this is counted:'),
+  },
   chooser: {
     title: tx('Melyiket válasszam?', 'Which dataset should I use?'),
     intro: tx(

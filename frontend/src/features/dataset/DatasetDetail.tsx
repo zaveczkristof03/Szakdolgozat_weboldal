@@ -1,5 +1,7 @@
 /**
- * Egy adatbázis adatlapja (jobb oldalról becsúszó panel).
+ * Egy adatbázis adatlapja. Két formában jelenik meg ugyanazzal a tartalommal:
+ * - nagy képernyőn a katalógus mellett, állandó harmadik oszlopként (DatasetPanel),
+ * - kisebb képernyőn és a többi oldalon jobbról becsúszó panelként (DatasetDetail).
  *
  * MINDEN mező megjelenik; ami nincs rögzítve, „Not recorded” jelölést kap
  * (nem tűnik el). Az alján a dokumentáltság: hány mező van kitöltve, mi hiányzik,
@@ -45,7 +47,9 @@ function FactList({ title, facts }: { title: string; facts: Fact[] }) {
   )
 }
 
-export default function DatasetDetail({ database: db, inComparison, compareFull, onClose, onToggleCompare }: Props) {
+type BodyProps = Omit<Props, 'onClose'>
+
+function DatasetDetailBody({ database: db, inComparison, compareFull, onToggleCompare }: BodyProps) {
   const sourceUrl = safeExternalUrl(db.source_url)
   const lightwave = lightwaveUrl(db.lightwave_database_id)
   const completeness = getCompleteness(db)
@@ -53,7 +57,7 @@ export default function DatasetDetail({ database: db, inComparison, compareFull,
   const { t } = useLang()
 
   return (
-    <Modal titleId="dataset-title" title={db.name} onClose={onClose} closeLabel={t(s.detail.close)} className="drawer">
+    <>
       {db.short_name && <p className="detail-code">{db.short_name}{db.version ? ` · ${t(s.detail.version)} ${db.version}` : ''}</p>}
       <p className="detail-description">{db.description || t(s.detail.noDescription)}</p>
 
@@ -111,6 +115,32 @@ export default function DatasetDetail({ database: db, inComparison, compareFull,
       </section>
 
       <p className="footnote">{t(s.detail.footnote)}</p>
+    </>
+  )
+}
+
+/** Becsúszó (modális) változat: kisebb képernyőn és a katalóguson kívüli oldalakon. */
+export default function DatasetDetail(props: Props) {
+  const { t } = useLang()
+  return (
+    <Modal titleId="dataset-title" title={props.database.name} onClose={props.onClose} closeLabel={t(s.detail.close)} className="drawer">
+      <DatasetDetailBody {...props} />
     </Modal>
+  )
+}
+
+/** Állandó oszlop változat: nagy képernyőn a katalógus mellett. Nem takarja el a táblázatot. */
+export function DatasetPanel(props: Props) {
+  const { t } = useLang()
+  return (
+    <section className="detail-panel" aria-labelledby="panel-title">
+      <div className="detail-panel-heading">
+        <h2 id="panel-title">{props.database.name}</h2>
+        <button type="button" className="modal-close" onClick={props.onClose} aria-label={t(s.detail.close)}>{t(s.app.close)}</button>
+      </div>
+      <div className="detail-panel-body">
+        <DatasetDetailBody {...props} />
+      </div>
+    </section>
   )
 }
