@@ -1,0 +1,85 @@
+/* Alap: színváltozók (design tokenek), alapelemek, űrlapelemek. */
+:root {
+  font-family: 'DM Sans', sans-serif;
+  color: #e5eaf2;
+  background: #0a101b;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  font-optical-sizing: auto;
+  --ground: #0a101b;
+  --surface: #101927;
+  --surface-raised: #142033;
+  --surface-soft: #0d1523;
+  --ink: #e5eaf2;
+  --muted: #94a2b6;
+  --quiet: #718198;
+  --line: #273448;
+  --accent: #65e3c3;
+  --accent-dark: #173a37;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  min-width: 320px;
+  min-height: 100%;
+  background: var(--ground);
+}
+
+body {
+  display: block;
+  width: 100%;
+  min-width: 320px;
+  min-height: 100vh;
+  margin: 0;
+  background: var(--ground);
+  text-align: left;
+}
+
+#root {
+  width: 100%;
+  min-width: 320px;
+  min-height: 100vh;
+  max-width: none;
+  margin: 0;
+  padding: 0;
+  text-align: left;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+a:hover {
+  color: #a1f5e0;
+}
+
+button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
