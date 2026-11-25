@@ -10,7 +10,7 @@
 
 .catalog-sidebar {
   position: sticky;
-  top: 20px;
+  top: 76px; /* a ragadós fejléc (56 px) alatt */
 }
 
 .filters {
@@ -70,13 +70,15 @@
   padding: 0;
   border: 0;
   background: none;
-  color: var(--accent);
+  color: var(--ink);
   text-align: left;
   font-weight: 500;
   cursor: pointer;
 }
 
-.dataset-link:hover { text-decoration: underline; text-underline-offset: 2px; }
+/* A kiemelőszín visszafogott: a nevek alapból semlegesek, csak rámutatáskor és a nyitott sorban zöldek. */
+.dataset-link:hover,
+.dataset-link[aria-current='true'] { color: var(--accent); text-decoration: underline; text-underline-offset: 2px; }
 
 .dataset-code {
   display: block;
@@ -408,13 +410,13 @@
 
 .catalog-panel {
   position: sticky;
-  top: 20px;
+  top: 76px;
 }
 
 .detail-panel {
   display: flex;
   flex-direction: column;
-  max-height: calc(100vh - 40px);
+  max-height: calc(100vh - 96px);
   background: var(--paper);
   border: 1px solid var(--rule);
 }

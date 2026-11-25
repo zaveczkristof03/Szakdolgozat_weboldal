@@ -3,7 +3,7 @@
  *
  * Tervezési elv: úgy nézzen ki, mint egy tudományos adatkatalógus vagy egy
  * könyvtári adatbázis, ne mint egy marketingoldal. Ezért:
- * - egyetlen kiemelőszín (sötétkék, a linkekhez és a kijelöléshez),
+ * - egyetlen kiemelőszín (smaragdzöld, a linkekhez és a kijelöléshez),
  * - nincs színátmenet, árnyék, lekerekített „kártya” és dekoratív ikon,
  * - a tartalmat vékony vonalak tagolják, nem dobozok,
  * - a számok egyforma szélességű (tabular) számjegyekkel, jobbra igazítva.
@@ -16,11 +16,15 @@
   --ink-faint: #8a8f98;
   --rule: #dedfe2;
   --rule-strong: #b8bbc1;
-  --accent: #1d4f91;
-  --accent-hover: #163d70;
-  --accent-tint: #edf2f9;
-  --accent-solid: #1d4f91;
+  /* Kiemelőszín: smaragdzöld. Fehéren 5,5:1 kontraszt (WCAG AA). */
+  --accent: #047857;
+  --accent-hover: #065f46;
+  --accent-tint: #e9f6f0;
+  --accent-solid: #047857;
   --on-accent: #ffffff;
+  /* Üveghatás csak a lebegő elemeken (fejléc, felugró adatlap). */
+  --glass: rgb(255 255 255 / 0.72);
+  --glass-strong: rgb(255 255 255 / 0.86);
   --row-hover: #fafafa;
   --backdrop: rgb(20 22 26 / 0.35);
   --danger: #9b2c2c;
@@ -60,11 +64,14 @@
   --ink-faint: #7d838d;
   --rule: #2d3239;
   --rule-strong: #454b55;
-  --accent: #8db4ec;
-  --accent-hover: #4a7cc2;
-  --accent-tint: #1e2a3b;
-  --accent-solid: #3a6aae;
-  --on-accent: #ffffff;
+  /* Sötét háttéren világosabb zöld; a teli gombon sötét szöveg (9,7:1). */
+  --accent: #3ddc97;
+  --accent-hover: #6ee7b7;
+  --accent-tint: #15291f;
+  --accent-solid: #3ddc97;
+  --on-accent: #06201a;
+  --glass: rgb(27 30 35 / 0.7);
+  --glass-strong: rgb(27 30 35 / 0.86);
   --row-hover: #20242a;
   --backdrop: rgb(0 0 0 / 0.55);
   --danger: #e59393;

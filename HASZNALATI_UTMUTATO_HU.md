@@ -49,7 +49,7 @@ eredményét (x / y formában). Bezárás: Close gomb vagy Esc.
 Legfeljebb négy adatbázis egymás mellett, mezőcsoportonként (azonosítók, méret,
 jelstruktúra, annotációk, technikai adatok, hozzáférés, forrás). A kutatási szempontból
 kulcsfontosságú eltérések (rekord- és személyszám, mintavételezés, elvezetésszám,
-annotáció, fájlformátum, licenc) kék hátteret és „(differs)” jelölést kapnak.
+annotáció, fájlformátum, licenc) zöld hátteret és „(differs)” jelölést kapnak.
 Az **Only show differences** elrejti az egyező sorokat. Adatbázist a katalógusból vagy az
 oldal tetején lévő listából lehet hozzáadni. A CSV-export a látható sorokat menti.
 

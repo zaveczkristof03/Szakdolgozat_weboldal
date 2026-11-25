@@ -1,7 +1,22 @@
 /* Oldalváz: felső fejléc a menüvel, alatta egy középre igazított tartalomsáv. */
 .site-header {
+  position: sticky;
+  top: 0;
+  z-index: 40;
   background: var(--paper);
   border-bottom: 1px solid var(--rule);
+}
+
+/*
+ * Üveghatás: a fejléc görgetéskor a tartalom fölött lebeg, ezért kissé áttetsző
+ * és elmosott. Csak ott, ahol a böngésző támogatja; máshol tömör marad.
+ */
+@supports (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px)) {
+  .site-header {
+    background: var(--glass);
+    -webkit-backdrop-filter: blur(16px) saturate(1.4);
+    backdrop-filter: blur(16px) saturate(1.4);
+  }
 }
 
 .site-header-inner {
@@ -132,5 +147,5 @@
 
 @media (max-width: 720px) {
   .header-tools { position: absolute; top: 10px; right: 16px; }
-  .site-header { position: relative; }
+  .site-header { position: relative; top: auto; }
 }

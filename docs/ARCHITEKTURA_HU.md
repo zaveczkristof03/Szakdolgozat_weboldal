@@ -100,7 +100,8 @@ forrást pontosan idézik. Egy teszt ellenőrzi, hogy minden mezőnek van magyar
 
 A felület egy tudományos adatkatalógusra hasonlít, nem marketingoldalra:
 
-- egyetlen kiemelőszín (sötétkék) a linkekhez és a kijelöléshez;
+- egyetlen kiemelőszín (smaragdzöld, sötét módban világosabb zöld, mindkettő WCAG AA kontraszttal), visszafogottan: gombok, kijelölt sor, rámutatás; az adatbázisnevek alapból semlegesek;
+- üveghatás (áttetszőség és elmosás) csak a lebegő elemeken: a ragadós fejlécen és a felugró adatlapon. Minden más lapos és tömör; ahol a böngésző nem tudja, ott is tömör marad;
 - minden szín CSS-változó (`styles/base.css`), a sötét mód csak ezek értékét cseréli le, így nincs két külön stíluslap;
 - nincs színátmenet, árnyék, dekoratív ikon és „kártya”, a tartalmat vékony vonalak tagolják;
 - a fő nézet egy rendezhető táblázat, mert a felhasználó számokat hasonlít össze;

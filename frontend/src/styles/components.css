@@ -239,3 +239,22 @@ input[type='checkbox']:disabled { cursor: not-allowed; }
   max-height: none;
   border-width: 0 0 0 1px;
 }
+
+/* Üveghatás a felugró adatlapon: mögötte elmosódva látszik a táblázat. */
+@supports (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px)) {
+  .modal-backdrop {
+    -webkit-backdrop-filter: blur(2px);
+    backdrop-filter: blur(2px);
+  }
+
+  .modal,
+  .modal-heading {
+    background: var(--glass-strong);
+  }
+
+  .modal,
+  .modal-heading {
+    -webkit-backdrop-filter: blur(20px) saturate(1.4);
+    backdrop-filter: blur(20px) saturate(1.4);
+  }
+}
