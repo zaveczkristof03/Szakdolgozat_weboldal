@@ -178,3 +178,35 @@ test('chooser: research area is read from the clinical focus only', () => {
   assert.deepEqual(fits.map((r) => r.db.id), [1])
   assert.deepEqual(others.map((r) => r.db.id), [3])
 })
+
+import { layoutTrace } from '../src/domain/ecgTrace.ts'
+import { canonicalLead, mapLeads } from '../src/domain/leads.ts'
+
+test('EKG-papír lépték: 25 mm/s, 10 mm/mV, és a hiányzó minta megszakítja a vonalat', () => {
+  const trace = layoutTrace([0, 1, null, 0.5], 4)
+  assert.ok(trace)
+  assert.equal(trace.widthMm, 25)
+  assert.equal(trace.gainMmPerMv, 10)
+  assert.equal(trace.heightMm, 15)
+  assert.equal(trace.path.split('M').length - 1, 2)
+  assert.match(trace.path, /^M0 12\.5L6\.25 2\.5M18\.75 7\.5$/)
+})
+
+test('EKG-papír: nagy kitérésnél a lépték feleződik, de a jel nem vágódik le', () => {
+  const trace = layoutTrace([-3, 3], 2)
+  assert.ok(trace)
+  assert.equal(trace.gainMmPerMv, 5)
+  assert.ok(trace.heightMm <= 40)
+  assert.equal(layoutTrace([null, 1], 100), null)
+})
+
+test('Elvezetéstérkép: csak egyértelmű nevek kerülnek a térképre', () => {
+  assert.equal(canonicalLead('MLII'), 'II')
+  assert.equal(canonicalLead('avf'), 'AVF')
+  assert.equal(canonicalLead('MV2'), 'V2')
+  assert.equal(canonicalLead('ECG1'), null)
+  assert.equal(canonicalLead('vx'), null)
+  const map = mapLeads(['MLII', 'V5', 'ECG'])
+  assert.deepEqual([...map.active].sort(), ['LL', 'RA', 'V5'])
+  assert.deepEqual(map.unmapped, ['ECG'])
+})

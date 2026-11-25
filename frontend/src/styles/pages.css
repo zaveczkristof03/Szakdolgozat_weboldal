@@ -340,6 +340,66 @@
 .rule-list dt { font-weight: 600; margin-top: 12px; }
 .rule-list dd { margin: 2px 0 0; max-width: 72ch; }
 
+/* ---- Mintafelvétel: EKG-csík és elvezetéstérkép ---- */
+.ecg-figure { margin: 0 0 14px; }
+
+.ecg-strip {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-width: 600px;
+  border: 1px solid var(--ecg-major);
+}
+
+.ecg-paper { fill: var(--ecg-paper); }
+.ecg-strip line { vector-effect: non-scaling-stroke; }
+.ecg-strip .grid-minor { stroke: var(--ecg-minor); stroke-width: 0.5px; }
+.ecg-strip .grid-major { stroke: var(--ecg-major); stroke-width: 0.8px; }
+
+.ecg-trace {
+  fill: none;
+  stroke: var(--ecg-trace);
+  stroke-width: 1.3px;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+  vector-effect: non-scaling-stroke;
+}
+
+.ecg-figure figcaption {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+  margin-top: 6px;
+  font-size: 0.85rem;
+  color: var(--ink-muted);
+}
+
+.ecg-scale { font-family: var(--font-mono); font-size: 0.8rem; }
+
+.lead-block {
+  display: grid;
+  grid-template-columns: 108px minmax(0, 1fr);
+  gap: 16px;
+  align-items: start;
+}
+
+.lead-block h4 { margin: 0 0 4px; font-size: 0.9rem; }
+.lead-names { margin: 0 0 8px; font-family: var(--font-mono); font-size: 0.85rem; overflow-wrap: anywhere; }
+
+.lead-list { margin: 0; font-size: 0.88rem; }
+.lead-list > div { margin-top: 4px; }
+.lead-list dt { display: inline; color: var(--ink-muted); }
+.lead-list dt::after { content: ': '; }
+.lead-list dd { display: inline; margin: 0; }
+
+.lead-map { width: 100%; height: auto; }
+.lead-map .body-outline { fill: none; stroke: var(--rule-strong); stroke-width: 1; }
+.lead-map .lead-vector { stroke: var(--accent); stroke-width: 0.8; stroke-dasharray: 2 1.5; }
+.lead-map .electrode circle { fill: var(--paper); stroke: var(--ink-faint); stroke-width: 0.8; }
+.lead-map .electrode.is-active circle { fill: var(--accent); stroke: var(--accent); }
+.lead-map .electrode text { font-family: var(--font-mono); font-size: 5px; fill: var(--ink); }
+
 /* ---- Széles képernyő: harmadik oszlop az adatlapnak (master-detail) ---- */
 .catalog-layout.has-panel {
   grid-template-columns: 220px minmax(0, 1fr) 440px;

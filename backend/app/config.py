@@ -17,6 +17,8 @@ DEFAULT_DB_PATH = BACKEND_DIR / "ekg_metadata.db"
 
 # A verziókezelt, ellenőrzött katalógus (minden rekord). Ebből lehet újraépíteni a DB-t.
 CATALOG_JSON_PATH = BACKEND_DIR / "data" / "catalog.json"
+# Valódi EKG-jelrészletek a PhysioNetről (scripts/fetch_ecg_samples.py készíti).
+ECG_SAMPLES_PATH = BACKEND_DIR / "data" / "ecg_samples.json"
 BACKUP_DIR = BACKEND_DIR / "backups"
 
 CORS_ORIGINS = [

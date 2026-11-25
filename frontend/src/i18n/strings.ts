@@ -14,6 +14,7 @@ export const s = {
     language: tx('Nyelv', 'Language'),
     themeToDark: tx('Sötét mód', 'Dark mode'),
     themeToLight: tx('Világos mód', 'Light mode'),
+    paper: tx('Milliméterpapír', 'Graph paper'),
     pages: {
       catalog: tx('Katalógus', 'Catalog'),
       choose: tx('Melyiket válasszam?', 'Which one to choose?'),
@@ -101,6 +102,20 @@ export const s = {
     fairCaption: tx('A FAIR-elvekhez kapcsolódó dokumentációs ellenőrzések. Ez nem FAIR-tanúsítvány.', 'Documentation checks related to the FAIR principles. This is not a FAIR certification.'),
     allChecks: tx('Minden ellenőrzés teljesül', 'All checks documented'),
     footnote: tx('Az adatok felhasználása előtt olvasd el a hivatalos dokumentációt és a licencet a PhysioNeten.', 'Check the official documentation and license on PhysioNet before reusing the data.'),
+  },
+  sample: {
+    title: tx('Mintafelvétel', 'Sample recording'),
+    caption: (record: string, signal: string, from: number, to: number) => tx(`${record} felvétel, ${signal} jel, ${from}–${to} s`, `Record ${record}, signal ${signal}, ${from}–${to} s`),
+    source: tx('Forrás: PhysioNet, megnyitás LightWAVE-ben', 'Source: PhysioNet, open in LightWAVE'),
+    scale: (gain: number) => tx(`25 mm/s · ${String(gain).replace('.', ',')} mm/mV`, `25 mm/s · ${gain} mm/mV`),
+    stripLabel: (signal: string) => tx(`Valódi EKG-jel (${signal}), 3 másodperc`, `Real ECG signal (${signal}), 3 seconds`),
+    leadsTitle: tx('A felvétel jelei', 'Signals in this record'),
+    mapLabel: tx('Elvezetéstérkép: a kiemelt elektródák adják a felvett elvezetéseket', 'Lead map: highlighted electrodes produce the recorded leads'),
+    mapped: tx('Térképen', 'On the map'),
+    unmapped: tx('Nem azonosítható', 'Not identifiable'),
+    unmappedHint: tx('a név nem mondja meg, hol volt az elektróda, ezért nem jelöljük', 'the name does not say where the electrode was, so it is not drawn'),
+    noneMapped: tx('egyik jelnév sem szabványos elvezetés', 'no signal name is a standard lead'),
+    note: tx('Ez az egy mintafelvétel jelei; az adatbázis más felvételeinél eltérhetnek. A végtagi elektródák a törzsön (Mason–Likar-elrendezés) látszanak.', 'These are the signals of this one sample record; other records may differ. Limb electrodes are shown on the torso (Mason–Likar placement).'),
   },
   compare: {
     title: tx('Adatbázisok összehasonlítása', 'Compare datasets'),

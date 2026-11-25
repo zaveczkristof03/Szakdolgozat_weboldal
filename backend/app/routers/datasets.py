@@ -7,12 +7,13 @@ Minden SQL paraméterezett (``?``), így a felhasználói szöveg nem tud SQL-t 
 
 from __future__ import annotations
 
+import json
 import sqlite3
 from typing import Any, Literal
 
 from fastapi import APIRouter, HTTPException, Query, status
 
-from .. import db
+from .. import config, db
 from ..fields import SORTABLE_FIELDS
 from ..schemas import DatasetPage, DatasetRecord
 
@@ -86,3 +87,25 @@ def search_datasets(
 def get_dataset(dataset_id: int) -> dict[str, Any]:
     with db.connect() as connection:
         return db.row_to_dict(require_existing(connection, dataset_id))
+
+
+def load_ecg_samples() -> dict[str, Any]:
+    """A letöltött jelrészletek. Ha a fájl nincs meg, üres: ilyenkor nincs mit mutatni."""
+    path = config.ECG_SAMPLES_PATH
+    if not path.exists():
+        return {}
+    return json.loads(path.read_text(encoding="utf-8")).get("samples", {})
+
+
+@router.get("/{dataset_id}/ecg-sample")
+def get_ecg_sample(dataset_id: int) -> dict[str, Any]:
+    """Egy valódi, 3 másodperces jelrészlet a forrásból. 404, ha nincs letöltve.
+
+    A frontend 404 esetén egyszerűen nem rajzol semmit: a hiányzó jelet nem pótoljuk.
+    """
+    with db.connect() as connection:
+        row = db.row_to_dict(require_existing(connection, dataset_id))
+    sample = load_ecg_samples().get(row.get("source_database_id") or "")
+    if sample is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="No ECG sample for this dataset.")
+    return {"source_database_id": row["source_database_id"], **sample}

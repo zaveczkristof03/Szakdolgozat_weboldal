@@ -2,3 +2,5 @@
 -r requirements.txt
 pytest>=9.0,<10.0
 httpx2>=2.16,<3.0
+# Csak a jelrészlet-letöltő szkripthez (scripts/fetch_ecg_samples.py).
+wfdb>=4.1

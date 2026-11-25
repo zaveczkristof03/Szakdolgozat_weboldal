@@ -48,6 +48,15 @@ cd backend
 ```
 
 Every record is validated on import (DOI format, ISO dates, HTTP(S) links, non-negative counts).
+
+The dataset detail shows a real 3-second ECG snippet per dataset, stored in `backend/data/ecg_samples.json`.
+It is downloaded from PhysioNet with the official `wfdb` package (internet needed); datasets that cannot be fetched are simply left out:
+
+```powershell
+cd backend
+.\.venv\Scripts\python.exe -m pip install wfdb
+.\.venv\Scripts\python.exe scripts\fetch_ecg_samples.py
+```
 Schema changes are numbered migrations in `backend/app/db.py`, each preceded by an automatic backup.
 
 ## API (read-only)

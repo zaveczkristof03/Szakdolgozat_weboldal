@@ -35,9 +35,11 @@ webes felületen nincs jelszó és nincs írási végpont, tehát nincs mit felt
 | `app/fields.py` | A katalógus mezőinek **egyetlen** listája. Minden SQL ebből épül, így nem lehet egy mezőt „elfelejteni”. |
 | `app/db.py` | Kapcsolat az SQLite-hoz (a végén mindig lezárja), táblák létrehozása, **migrációk** (számozott sémaváltozások, mindegyik előtt automatikus mentés). |
 | `app/schemas.py` | Adatellenőrzés (Pydantic): DOI-formátum, dátum, nem negatív számok, csak http(s) link. A hiányzó szám `null` marad. |
-| `app/routers/datasets.py` | A `/datasets` végpontok: lista, keresés, egy rekord. |
+| `app/routers/datasets.py` | A `/datasets` végpontok: lista, keresés, egy rekord, jelrészlet. |
 | `data/catalog.json` | A 21 ellenőrzött rekord. |
 | `scripts/catalog_sync.py` | JSON → adatbázis (`import`) és adatbázis → JSON (`export`). |
+| `scripts/fetch_ecg_samples.py` | Adatbázisonként egy valódi, 3 másodperces EKG-jelrészletet tölt le a PhysioNetről (a hivatalos `wfdb` csomaggal) a `data/ecg_samples.json` fájlba. Ami nem tölthető le, vagy nincs egyértelműen EKG-nak nevezett jele, kimarad; kitalált jel nincs. |
+| `data/ecg_samples.json` | A letöltött jelrészletek: felvétel neve, a felvétel jelneveinek listája, a kirajzolt jel, mintavételezés, kezdőidő, mintaértékek mV-ban. |
 | `tests/` | Automatikus tesztek, mindegyik ideiglenes adatbázison. |
 
 ### Az API
@@ -48,6 +50,7 @@ webes felületen nincs jelszó és nincs írási végpont, tehát nincs mit felt
 | `GET /datasets` | a teljes katalógus |
 | `GET /datasets/search` | szerveroldali keresés, szűrés, rendezés, lapozás |
 | `GET /datasets/{id}` | egy rekord |
+| `GET /datasets/{id}/ecg-sample` | a valódi jelrészlet, vagy 404, ha nincs letöltve (ilyenkor az oldal nem rajzol semmit) |
 
 ## Frontend – `frontend/src/`
 
@@ -57,6 +60,7 @@ webes felületen nincs jelszó és nincs írási végpont, tehát nincs mit felt
 | `App.tsx` | A „karmester”: letölti a katalógust, tárolja az összehasonlításra kijelölt adatbázisokat, és az URL alapján kiválasztja az oldalt. |
 | `api/client.ts` | A backend-hívás egy helyen. |
 | `hooks/useMediaQuery.ts` | Figyeli az ablak szélességét: széles képernyőn az adatlap állandó jobb oldali panel, keskenyen felugró ablak. |
+| `hooks/usePaper.ts` | A milliméterpapír-háttér ki/be kapcsolása (alapból be), a választást megjegyzi. |
 | `hooks/useTheme.ts` | Világos / sötét mód: először a rendszerbeállítást követi, utána a választást megjegyzi. |
 | `hooks/useHashRoute.ts` | Navigáció a címsor `#/...` része alapján (Vissza gomb, linkelhető adatlap: `#/catalog?dataset=12`). |
 | `layout/Header.tsx` | Felső sáv a három menüponttal és a HU / EN nyelvváltóval. |
@@ -81,6 +85,8 @@ webes felületen nincs jelszó és nincs írási végpont, tehát nincs mit felt
 | `fair.ts` | FAIR-elvekhez kapcsolódó dokumentációs ellenőrzések (x / y, nem pontszám). |
 | `compare.ts` | Az összehasonlító tábla sorai, eltérések, kulcsfontosságú eltérések. |
 | `csv.ts` | Biztonságos CSV-export. |
+| `ecgTrace.ts` | A jelrészlet kirajzolása szabványos EKG-papír-léptékben: 25 mm/s és 10 mm/mV (nagy kitérésnél 5 vagy 2,5 mm/mV, ezt a felirat jelzi). A hiányzó minta megszakítja a vonalat, nem kötjük át. |
+| `leads.ts` | Elvezetéstérkép: a jelnevekből (pl. „MLII”, „V5”, „aVF”) meghatározza a résztvevő elektródákat. Az általános nevek (pl. „ECG1”) „nem azonosítható” jelölést kapnak, nem találgatunk. |
 
 ## Kétnyelvű felület
 
@@ -101,7 +107,9 @@ A felület egy tudományos adatkatalógusra hasonlít, nem marketingoldalra:
 - a fő nézet egy rendezhető táblázat, mert a felhasználó számokat hasonlít össze;
 - a számok egyforma szélességű számjegyekkel, jobbra igazítva jelennek meg, így oszlopban összevethetők;
 - a hiányzó érték dőlt, halvány „Not recorded”: látszik, de nem tűnik valódi adatnak;
-- nincs összesítő „KPI-doboz” és diagram, mert 21 rekordnál ezek nem mondanak többet a táblázatnál.
+- nincs összesítő „KPI-doboz” és diagram, mert 21 rekordnál ezek nem mondanak többet a táblázatnál;
+- az egyetlen „kép” a valódi adat: az adatlapon egy 3 másodperces jelrészlet a forrásból, szabványos EKG-papíron, mellette egy elvezetéstérkép. Ha nincs letöltött jel, nincs helyette illusztráció;
+- a háttér halvány milliméterpapír (az EKG-papír 1 mm-es és 5 mm-es rácsa), a fejlécben kikapcsolható. Ez a témához kötött, nem öncélú dísz.
 - széles képernyőn (legalább 1600 px) a katalógus három oszlopos: szűrők, táblázat, és jobb oldalt állandó adatlap-panel (master-detail). A sorra kattintva ott jelennek meg a részletek; amíg nincs kiválasztás, a panel a katalógusból számolt, ellenőrizhető tényeket mutatja (`features/catalog/CatalogOverview.tsx`). Keskenyebb képernyőn ugyanez az adatlap jobbról nyíló ablakként jelenik meg. A váltást a `hooks/useMediaQuery.ts` (`WIDE_LAYOUT_QUERY`) dönti el, az adatlap tartalma (`DatasetDetailBody`) mindkét esetben ugyanaz a komponens.
 
 ## Egy kattintás útja – példa a védésre

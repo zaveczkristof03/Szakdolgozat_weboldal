@@ -1,10 +1,11 @@
 /**
  * Az összes backend-hívás egy helyen.
  *
- * Az API csak olvasható: egyetlen hívásra van szükség, a teljes katalógusra.
+ * Az API csak olvasható: a teljes katalógus, és adatbázisonként egy valódi EKG-jelrészlet.
  * Ha változik az API címe, csak ezt a fájlt (vagy a VITE_API_BASE_URL változót)
  * kell módosítani. A komponensek nem írnak közvetlenül `fetch`-et.
  */
+import type { EcgSample } from '../domain/ecgTrace.ts'
 import type { ECGDatabase } from '../domain/types.ts'
 
 export const API_BASE_URL: string = import.meta.env.VITE_API_BASE_URL ?? 'http://127.0.0.1:8000'
@@ -25,4 +26,13 @@ async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
 
 export const api = {
   listDatasets: (signal?: AbortSignal) => request<ECGDatabase[]>('/datasets', { signal }),
+  /** A jelrészlet, vagy `null`, ha ehhez az adatbázishoz nincs letöltve (404). */
+  getEcgSample: async (id: number, signal?: AbortSignal): Promise<EcgSample | null> => {
+    try {
+      return await request<EcgSample>(`/datasets/${id}/ecg-sample`, { signal })
+    } catch (error) {
+      if (error instanceof ApiError && error.status === 404) return null
+      throw error
+    }
+  },
 }

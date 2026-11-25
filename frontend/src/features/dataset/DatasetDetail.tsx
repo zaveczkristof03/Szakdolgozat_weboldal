@@ -14,6 +14,7 @@ import { doiUrl, lightwaveUrl, safeExternalUrl } from '../../domain/format.ts'
 import type { ECGDatabase } from '../../domain/types.ts'
 import Modal from '../../components/Modal.tsx'
 import Value from '../../components/Value.tsx'
+import EcgSampleSection from './EcgSample.tsx'
 import { s } from '../../i18n/strings.ts'
 import { useLang } from '../../i18n/useLang.ts'
 
@@ -68,6 +69,8 @@ function DatasetDetailBody({ database: db, inComparison, compareFull, onToggleCo
         {sourceUrl && <a className="button button-quiet" href={sourceUrl} target="_blank" rel="noopener noreferrer">{t(s.detail.openPhysionet)}</a>}
         {lightwave && <a className="button button-quiet" href={lightwave} target="_blank" rel="noopener noreferrer">{t(s.detail.openLightwave)}</a>}
       </div>
+
+      <EcgSampleSection key={db.id} datasetId={db.id} />
 
       <FactList title={t(s.detail.size)} facts={[
         { label: t(s.detail.records), value: <><Value value={db.records} />{db.records_label && <span className="fact-note"> · {db.records_label}</span>}</> },
