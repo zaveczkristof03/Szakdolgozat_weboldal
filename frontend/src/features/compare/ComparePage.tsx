@@ -78,7 +78,7 @@ export default function ComparePage({ databases, compareIds, onToggle, onReset }
             </thead>
             <tbody>
               {rows.map((row, index) => {
-                const startsGroup = index === 0 || rows[index - 1].group !== row.group
+                const startsGroup = index === 0 || rows[index - 1].group.en !== row.group.en
                 const isKey = row.key && row.different && selected.length > 1
                 return (
                   <Fragment key={`${row.group.en}-${row.label.en}`}>

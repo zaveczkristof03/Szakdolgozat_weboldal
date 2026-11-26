@@ -50,6 +50,12 @@ test('M7: legfeljebb négy adatbázis jelölhető ki összehasonlításra', asyn
   for (let i = 0; i < 4; i++) await boxes.nth(i).check()
   await expect(boxes.nth(4)).toBeDisabled()
   await expect(page.getByRole('link', { name: /Összehasonlítás/ })).toContainText('4')
+
+  // Az összehasonlító táblázatban minden mezőcsoport fejléce csak egyszer jelenik meg.
+  await page.getByRole('link', { name: /Összehasonlítás/ }).click()
+  const groups = await page.locator('tr.group-row').allTextContents()
+  expect(groups.length).toBeGreaterThan(1)
+  expect(new Set(groups).size).toBe(groups.length)
 })
 
 test('Áttekintés: a grafikonok a katalógusból számolnak, rámutatáskor látszanak az adatbázisok', async ({ page }) => {
