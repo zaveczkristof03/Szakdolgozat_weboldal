@@ -13,7 +13,7 @@
   --page: #f7f7f5;
   --ink: #1b1d21;
   --ink-muted: #5b6069;
-  --ink-faint: #8a8f98;
+  --ink-faint: #6b717a; /* fehéren 4,9:1 (WCAG AA) */
   --rule: #dedfe2;
   --rule-strong: #b8bbc1;
   /* Kiemelőszín: smaragdzöld. Fehéren 5,5:1 kontraszt (WCAG AA). */
@@ -61,7 +61,7 @@
   --page: #131518;
   --ink: #e6e7ea;
   --ink-muted: #a6abb4;
-  --ink-faint: #7d838d;
+  --ink-faint: #8f959f; /* sötéten 5,5:1 (WCAG AA) */
   --rule: #2d3239;
   --rule-strong: #454b55;
   /* Sötét háttéren világosabb zöld; a teli gombon sötét szöveg (9,7:1). */

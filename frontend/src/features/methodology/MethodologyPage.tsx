@@ -109,6 +109,7 @@ export default function MethodologyPage({ databases, onOpen }: Props) {
       <section>
         <h2>{c.completenessTitle}</h2>
         <p>{c.completeness(completenessFields.length)}</p>
+        <div className="table-scroll">
         <table className="data-table compact">
           <thead><tr><th scope="col">{c.group}</th><th scope="col">{c.fields}</th></tr></thead>
           <tbody>
@@ -120,6 +121,7 @@ export default function MethodologyPage({ databases, onOpen }: Props) {
             ))}
           </tbody>
         </table>
+        </div>
 
         <h3>{c.perDataset}</h3>
         <div className="table-scroll">
@@ -143,6 +145,7 @@ export default function MethodologyPage({ databases, onOpen }: Props) {
       <section>
         <h2>{c.fairTitle}</h2>
         <p>{c.fair}</p>
+        <div className="table-scroll">
         <table className="data-table compact">
           <thead><tr><th scope="col">{c.principle}</th><th scope="col">{c.check}</th><th scope="col">{c.metWhen}</th></tr></thead>
           <tbody>
@@ -155,6 +158,7 @@ export default function MethodologyPage({ databases, onOpen }: Props) {
             )))}
           </tbody>
         </table>
+        </div>
       </section>
 
       <section>
