@@ -1,71 +1,81 @@
 # EKG MetaData Explorer
 
-React/Vite frontend and FastAPI/SQLite backend for comparing officially documented ECG datasets.
+A small web application for finding and comparing open ECG datasets by their documented metadata.
+React/Vite frontend, read-only FastAPI/SQLite backend. Thesis project.
 
-## Run locally
+## What it does
 
-1. Create or activate `backend/.venv`, then install the backend packages used by the project and its tests:
+- **Catalog**: search and filter 21 PhysioNet ECG datasets, sort the table, export CSV.
+- **Dataset page**: every recorded field, links to PhysioNet and LightWAVE, and how well the dataset is documented.
+- **Compare**: up to four datasets side by side, with key differences marked.
+- **Methodology**: where the data comes from, how “Documented” is counted, the FAIR-related checks and the limitations.
 
-   ```powershell
-   cd backend
-   .\.venv\Scripts\python.exe -m pip install -r requirements-dev.txt
-   ```
+The interface is available in Hungarian (default) and English via the HU / EN switch in the header.
 
-2. Set a non-empty administrator secret for the current shell. The backend intentionally refuses to start without it.
+Missing values are shown as “Not recorded” (“Nincs adat”) and are never replaced by estimates. Records and subjects are always kept separate.
 
-   ```powershell
-   $env:EKG_ADMIN_PASSWORD = "use-a-strong-local-secret"
-   .\.venv\Scripts\uvicorn.exe main:app --reload
-   ```
+See [`HASZNALATI_UTMUTATO_HU.md`](HASZNALATI_UTMUTATO_HU.md) for the Hungarian user guide and [`docs/ARCHITEKTURA_HU.md`](docs/ARCHITEKTURA_HU.md) for a beginner-friendly map of the code.
 
-3. In a second terminal, start the frontend:
+## Run locally (Windows)
 
-   ```powershell
-   cd frontend
-   npm install
-   npm run dev
-   ```
-
-`VITE_API_BASE_URL` optionally changes the frontend API base URL; it defaults to `http://127.0.0.1:8000` for local development.
-
-## Catalog data and migration
-
-`ecg_dataset_catalog` is the active catalog used by the API. The historical `ecgdatabase` table is retained unchanged for a later, explicit consolidation migration.
-
-The 2026-10-29 catalog expansion added optional provenance, identifier, format, access, annotation, duration and LightWAVE fields with additive SQLite `ALTER TABLE` operations. A byte-identical pre-migration database backup is stored in `backend/backups/`.
-
-The curated additions are in `backend/catalog_seed.json`. Run the idempotent importer with the administrator environment variable configured:
+Double-click `INDITAS_EGYSZERU.bat`, or start the two parts by hand:
 
 ```powershell
 cd backend
-.\.venv\Scripts\python.exe seed_catalog.py
+py -m venv .venv
+.\.venv\Scripts\python.exe -m pip install -r requirements-dev.txt
+.\.venv\Scripts\python.exe -m uvicorn main:app --reload
 ```
 
-The importer skips a record when either its official database ID or its normalized official source URL already exists. Seed metadata is limited to facts recorded in the linked official source; fields not verified are left empty.
+```powershell
+cd frontend
+npm.cmd install
+npm.cmd run dev
+```
 
-## API
+The site runs at `http://localhost:5173`, the API at `http://127.0.0.1:8000` (`/docs` for the API documentation).
+`VITE_API_BASE_URL` optionally changes the API address used by the frontend.
+
+## Catalog data
+
+All 21 curated records are version-controlled in `backend/data/catalog.json`; the SQLite file is git-ignored.
+To change the data, edit the JSON and import it (a timestamped backup is made first, nothing is deleted):
+
+```powershell
+cd backend
+.\.venv\Scripts\python.exe scripts\catalog_sync.py import   # JSON -> database
+.\.venv\Scripts\python.exe scripts\catalog_sync.py export   # database -> JSON
+```
+
+Every record is validated on import (DOI format, ISO dates, HTTP(S) links, non-negative counts).
+
+The dataset detail shows a real 3-second ECG snippet per dataset, stored in `backend/data/ecg_samples.json`.
+It is downloaded from PhysioNet with the official `wfdb` package (internet needed); datasets that cannot be fetched are simply left out:
+
+```powershell
+cd backend
+.\.venv\Scripts\python.exe -m pip install wfdb
+.\.venv\Scripts\python.exe scripts\fetch_ecg_samples.py
+```
+Schema changes are numbered migrations in `backend/app/db.py`, each preceded by an automatic backup.
+
+## API (read-only)
 
 - `GET /health`
-- `GET /datasets` — compatibility list endpoint
-- `GET /datasets/search` — validated server-side `q`, category, frequency, lead-count, format, licence, access-condition, sorting and pagination parameters
-- `GET /datasets/{id}` — detail record
-- `POST`, `PUT`, `DELETE /datasets` — require `X-Admin-Token`
-- `POST /admin/login`, `POST /admin/logout`
+- `GET /datasets`: the full catalog
+- `GET /datasets/search`: server-side search, filters, sorting and pagination
+- `GET /datasets/{id}`: one record
 
-External source URLs are limited to HTTP(S). The frontend opens external resources with `noopener noreferrer`. A LightWAVE link is shown only when the verified `lightwave_database_id` is present.
+`records`, `frequency`, `leads` and `subject_count` may be `null` (not recorded).
 
 ## Checks
 
 ```powershell
 cd backend
-$env:EKG_ADMIN_PASSWORD = "test-only-admin-password"
 .\.venv\Scripts\python.exe -m pytest tests -q
 
 cd ..\frontend
-npm run lint
-npm run build
+npm.cmd run test:domain
+npm.cmd run lint
+npm.cmd run build
 ```
-
-## Known limitations
-
-The current token and login-rate-limit state are in process memory, appropriate for a single local backend process but not a multi-worker deployment. The legacy SQLModel table remains for data-preservation reasons and is not used by the running API.

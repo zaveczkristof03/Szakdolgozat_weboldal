@@ -1,0 +1,6 @@
+/* A stíluslapok belépési pontja. A sorrend számít: alapok → elrendezés → elemek → oldalak. */
+@import './fonts.css';
+@import './base.css';
+@import './layout.css';
+@import './components.css';
+@import './pages.css';
