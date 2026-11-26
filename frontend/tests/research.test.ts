@@ -210,3 +210,45 @@ test('Elvezetéstérkép: csak egyértelmű nevek kerülnek a térképre', () =>
   assert.deepEqual([...map.active].sort(), ['LL', 'RA', 'V5'])
   assert.deepEqual(map.unmapped, ['ECG'])
 })
+
+// ---------- Áttekintés oldal (domain/overview.ts) a valódi katalógusadatokon ----------
+import { readFileSync } from 'node:fs'
+import { byCategory, byCompleteness, byFairCheck, byFrequency, byLeads, byRecordBand, catalogTotals } from '../src/domain/overview.ts'
+
+const catalog: ECGDatabase[] = JSON.parse(readFileSync(new URL('../../backend/data/catalog.json', import.meta.url), 'utf8'))
+const sumCounts = (buckets: Array<{ count: number }>) => buckets.reduce((acc, bucket) => acc + bucket.count, 0)
+
+test('overview: every distribution accounts for every dataset exactly once', () => {
+  for (const buckets of [byFrequency(catalog), byLeads(catalog), byRecordBand(catalog), byCategory(catalog), byCompleteness(catalog)]) {
+    assert.equal(sumCounts(buckets), catalog.length)
+    assert.equal(new Set(buckets.flatMap((bucket) => bucket.names)).size, catalog.length)
+  }
+})
+
+test('overview: a missing value gets its own last "Not recorded" group and is never guessed', () => {
+  const sample = [afdb, { ...afdb, id: 2, short_name: 'X', frequency: null }, { ...afdb, id: 3, short_name: 'Y', frequency: 500 }]
+  const buckets = byFrequency(sample)
+  assert.deepEqual(buckets.map((bucket) => bucket.key), ['250', '500', 'missing'])
+  assert.deepEqual(buckets[2].names, ['X'])
+})
+
+test('overview: numeric groups are in ascending order, categories by frequency', () => {
+  const hz = byFrequency(catalog).map((bucket) => Number(bucket.key))
+  assert.deepEqual(hz, [...hz].sort((a, b) => a - b))
+  const counts = byCategory(catalog).map((bucket) => bucket.count)
+  assert.deepEqual(counts, [...counts].sort((a, b) => b - a))
+})
+
+test('overview: record bands and totals match the catalog', () => {
+  const bands = byRecordBand(catalog)
+  assert.equal(bands.find((bucket) => bucket.key === '3')?.count, catalog.filter((db) => (db.records ?? 0) >= 10000).length)
+  const totals = catalogTotals(catalog)
+  assert.equal(totals.records, catalog.reduce((acc, db) => acc + (db.records ?? 0), 0))
+  assert.equal(totals.subjectsKnown, catalog.filter((db) => db.subject_count !== null).length)
+})
+
+test('overview: one bar per FAIR check, counts never exceed the catalog size', () => {
+  const checks = byFairCheck(catalog)
+  assert.equal(checks.length, fairDefinitions.reduce((acc, dimension) => acc + dimension.checks.length, 0))
+  assert.ok(checks.every((bucket) => bucket.count >= 0 && bucket.count <= catalog.length))
+})

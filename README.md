@@ -78,4 +78,11 @@ cd ..\frontend
 npm.cmd run test:domain
 npm.cmd run lint
 npm.cmd run build
+
+# Browser tests (Playwright + axe accessibility checks). Starts the backend and the
+# dev server itself; the first time, install the browser: npx.cmd playwright install chromium
+npm.cmd run test:e2e
 ```
+
+The same checks run automatically on GitHub for every push and pull request
+(`.github/workflows/ci.yml`).

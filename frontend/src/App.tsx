@@ -4,7 +4,7 @@
  * Mit csinál?
  * - Egyszer betölti a teljes katalógust az API-ból.
  * - Tárolja a közös állapotot: melyik adatbázisok vannak kijelölve összehasonlításra.
- * - Az URL alapján (#/catalog, #/compare, #/methodology) eldönti, melyik oldal látszik,
+ * - Az URL alapján (#/catalog, #/stats, #/compare, #/methodology) eldönti, melyik oldal látszik,
  *   és hogy nyitva van-e egy adatlap (#/catalog?dataset=12).
  *
  * Maguk az oldalak a features/ mappában vannak; ez a fájl csak összeköti őket.
@@ -22,6 +22,7 @@ import ComparePage from './features/compare/ComparePage.tsx'
 import MethodologyPage from './features/methodology/MethodologyPage.tsx'
 import ChooserPage from './features/chooser/ChooserPage.tsx'
 import DatasetDetail, { DatasetPanel } from './features/dataset/DatasetDetail.tsx'
+import StatsPage from './features/stats/StatsPage.tsx'
 import CatalogOverview from './features/catalog/CatalogOverview.tsx'
 import { useMediaQuery, WIDE_LAYOUT_QUERY } from './hooks/useMediaQuery.ts'
 
@@ -85,6 +86,8 @@ export default function App() {
             panel={showPanel ? (detailProps ? <DatasetPanel key={detailProps.database.id} {...detailProps} /> : <CatalogOverview databases={databases} />) : null}
           />
         )
+      case 'stats':
+        return <StatsPage databases={databases} />
       case 'choose':
         return (
           <ChooserPage
