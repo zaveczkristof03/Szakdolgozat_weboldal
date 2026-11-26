@@ -1,6 +1,7 @@
 # Runtime and test-only dependencies for a reproducible local environment.
 -r requirements.txt
 pytest>=9.0,<10.0
+# A FastAPI/Starlette TestClient a httpx2 csomagot kéri (a sima httpx-et már elavultnak jelzi).
 httpx2>=2.16,<3.0
 # Csak a jelrészlet-letöltő szkripthez (scripts/fetch_ecg_samples.py).
 wfdb>=4.1
